@@ -118,11 +118,13 @@ window.TimelinePage = function TimelinePage({ palette, mode }) {
               alignItems: 'flex-start', paddingTop: 14,
             }}>
               <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-                <PhotosRow photos={selected.photos || []} palette={P} accent={pin} />
+                <PhotosRow photos={(selected.photos || []).filter(p => p.src)} palette={P} accent={pin} />
               </div>
-              <div style={{ flex: '0 1 320px', minWidth: 260 }}>
-                <StickyNote event={selected} palette={P} accent={pin} />
-              </div>
+              {!selected.noSticky && (
+                <div style={{ flex: '0 1 320px', minWidth: 260 }}>
+                  <StickyNote event={selected} palette={P} accent={pin} />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -139,15 +141,27 @@ function MapCard({ palette, accent, city, t, event, mode }) {
   const mapW = 960, mapH = 500;
   const aspect = mapH / mapW;
 
-  // center-and-zoom: compute viewBox centered on city with soft easing
-  const [vb, setVb] = React.useState(() => computeViewBox(city, mapW, mapH));
+  const pathCities = React.useMemo(() => {
+    const keys = event.path && event.path.length ? event.path : [event.city];
+    return keys.map(k => window.CITIES[k]).filter(Boolean);
+  }, [event.id]);
+
+  // center-and-zoom: compute viewBox centered on city/path with soft easing
+  const [zoomed, setZoomed] = React.useState(true);
+  const computeTarget = React.useCallback(() => {
+    return zoomed
+      ? computeViewBox(pathCities, mapW, mapH)
+      : { x: 0, y: 0, w: mapW, h: mapH };
+  }, [zoomed, pathCities]);
+
+  const [vb, setVb] = React.useState(() => computeTarget());
   React.useEffect(() => {
-    const target = computeViewBox(city, mapW, mapH);
+    const target = computeTarget();
     const start = performance.now();
     const from = { ...vb };
     let raf;
     const animate = (now) => {
-      const p = Math.min(1, (now - start) / 700);
+      const p = Math.min(1, (now - start) / 900);
       const e = 1 - Math.pow(1 - p, 3);
       setVb({
         x: from.x + (target.x - from.x) * e,
@@ -159,9 +173,13 @@ function MapCard({ palette, accent, city, t, event, mode }) {
     };
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
-  }, [city.x, city.y]);
+  }, [event.id, zoomed]);
+
+  // when the event changes, re-enter zoomed mode
+  React.useEffect(() => { setZoomed(true); }, [event.id]);
 
   const pinPulse = (Math.sin(t * 2.6) + 1) / 2;
+  const zoomScale = vb.w / mapW;
 
   return (
     <div style={{
@@ -186,17 +204,19 @@ function MapCard({ palette, accent, city, t, event, mode }) {
       }} />
 
       <svg viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
+        onClick={() => setZoomed(z => !z)}
         style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           display: 'block',
+          cursor: zoomed ? 'zoom-out' : 'zoom-in',
         }}>
-        {/* graticule */}
-        <g stroke={P.rule} strokeWidth="0.3" opacity="0.6">
+        {/* graticule — non-scaling-stroke keeps lines thin regardless of zoom */}
+        <g stroke={P.rule} strokeWidth="0.6" opacity="0.6" vectorEffect="non-scaling-stroke">
           {[0, 1, 2, 3, 4, 5].map(i => (
-            <line key={'h'+i} x1="0" x2={mapW} y1={i * mapH / 5} y2={i * mapH / 5}/>
+            <line key={'h'+i} x1="0" x2={mapW} y1={i * mapH / 5} y2={i * mapH / 5} vectorEffect="non-scaling-stroke"/>
           ))}
           {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-            <line key={'v'+i} x1={i * mapW / 8} x2={i * mapW / 8} y1="0" y2={mapH}/>
+            <line key={'v'+i} x1={i * mapW / 8} x2={i * mapW / 8} y1="0" y2={mapH} vectorEffect="non-scaling-stroke"/>
           ))}
         </g>
 
@@ -204,33 +224,57 @@ function MapCard({ palette, accent, city, t, event, mode }) {
         <path d={window.WORLD_MAP_PATH}
           fill={P.bgAlt}
           stroke={P.inkMute}
-          strokeWidth="0.8"
+          strokeWidth="1"
           strokeLinejoin="round"
-          opacity="0.85"/>
+          opacity="0.85"
+          vectorEffect="non-scaling-stroke"/>
 
         {/* city dots for all events (faint) */}
         {Object.entries(window.CITIES).map(([k, c]) => (
-          <circle key={k} cx={c.x} cy={c.y} r="1.6"
+          <circle key={k} cx={c.x} cy={c.y} r={1.6 * zoomScale}
             fill={P.inkMute} opacity="0.4"/>
         ))}
 
-        {/* active pin — pulse */}
+        {/* trajectory line for multi-city trips */}
+        {pathCities.length > 1 && (
+          <g>
+            <polyline
+              points={pathCities.map(c => `${c.x},${c.y}`).join(' ')}
+              fill="none"
+              stroke={accent}
+              strokeWidth="1.8"
+              strokeDasharray="4 4"
+              opacity="0.85"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+            {pathCities.slice(0, -1).map((c, i) => (
+              <circle key={i} cx={c.x} cy={c.y} r={2.6 * zoomScale}
+                fill={accent} stroke={P.paper} strokeWidth="1.4"
+                vectorEffect="non-scaling-stroke"/>
+            ))}
+          </g>
+        )}
+
+        {/* active pin (final stop) — pulse */}
         <g>
-          <circle cx={city.x} cy={city.y} r={10 + pinPulse * 6}
+          <circle cx={city.x} cy={city.y} r={(10 + pinPulse * 6) * zoomScale}
             fill={accent} opacity={0.18 - pinPulse * 0.1}/>
-          <circle cx={city.x} cy={city.y} r={4 + pinPulse * 1.2}
+          <circle cx={city.x} cy={city.y} r={(4 + pinPulse * 1.2) * zoomScale}
             fill={accent} opacity={0.35}/>
-          <circle cx={city.x} cy={city.y} r="3" fill={accent}/>
-          <circle cx={city.x} cy={city.y} r="1.2" fill={P.paper}/>
+          <circle cx={city.x} cy={city.y} r={3 * zoomScale} fill={accent}/>
+          <circle cx={city.x} cy={city.y} r={1.2 * zoomScale} fill={P.paper}/>
         </g>
 
-        {/* city label */}
-        <g transform={`translate(${city.x + 8}, ${city.y - 4})`}>
-          <rect x="-2" y="-10" width={city.label.length * 5.2 + 10}
-            height="14" fill={P.paper} opacity="0.85"/>
-          <text x="4" y="0" fontSize="9"
+        {/* city label (for primary/active pin) */}
+        <g transform={`translate(${city.x + 8 * zoomScale}, ${city.y - 4 * zoomScale})`}>
+          <rect x={-2 * zoomScale} y={-10 * zoomScale}
+            width={(city.label.length * 5.2 + 10) * zoomScale}
+            height={14 * zoomScale} fill={P.paper} opacity="0.85"/>
+          <text x={4 * zoomScale} y={0} fontSize={9 * zoomScale}
             fontFamily='"JetBrains Mono", monospace'
-            fill={P.ink} letterSpacing="0.3">{city.label}</text>
+            fill={P.ink} letterSpacing={0.3 * zoomScale}>{city.label}</text>
         </g>
       </svg>
 
@@ -254,17 +298,29 @@ function MapCard({ palette, accent, city, t, event, mode }) {
   );
 }
 
-function computeViewBox(city, mapW, mapH) {
-  // Keep full map view; could zoom in based on city — for now, nudge toward city
-  const w = mapW, h = mapH;
-  const maxOffX = mapW * 0.04, maxOffY = mapH * 0.04;
-  const dx = (city.x - mapW / 2) / (mapW / 2);
-  const dy = (city.y - mapH / 2) / (mapH / 2);
-  return {
-    x: dx * maxOffX,
-    y: dy * maxOffY,
-    w, h,
-  };
+function computeViewBox(cities, mapW, mapH) {
+  if (!cities || !cities.length) return { x: 0, y: 0, w: mapW, h: mapH };
+
+  const aspect = mapH / mapW;
+  const xs = cities.map(c => c.x);
+  const ys = cities.map(c => c.y);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+
+  // target zoom: single-city ≈ 320×167; multi-city fits bounds + padding
+  const bboxW = Math.max(maxX - minX, (maxY - minY) / aspect);
+  const baseW = cities.length > 1 ? bboxW + 140 : 320;
+  let w = Math.max(260, Math.min(mapW, baseW));
+  let h = w * aspect;
+
+  let x = cx - w / 2;
+  let y = cy - h / 2;
+  // clamp to map bounds
+  x = Math.max(0, Math.min(mapW - w, x));
+  y = Math.max(0, Math.min(mapH - h, y));
+  return { x, y, w, h };
 }
 
 // ─────────────────────────────────────────────────────────────
