@@ -42,7 +42,7 @@ window.TIMELINE_EVENTS = [
     id: 'taiwan26', year: 2026, month: 'Mar',
     title: 'Taiwan — spring break',
     city: 'tainan', category: 'travel', path: ['taipei', 'tainan'],
-    body: '9 days.',
+    body: '9 days split between Tainan and Taipei. Night markets, temples, the best beef noodle soup.',
     photos: [
       { caption: 'Yongkang Street, Taipei', src: 'site/photos/taiwan-2026-1.jpg' },
       { caption: 'Night Markets',           src: 'site/photos/taiwan-2026-2.jpg' },

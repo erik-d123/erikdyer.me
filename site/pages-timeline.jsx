@@ -237,45 +237,48 @@ function MapCard({ palette, accent, city, t, event, mode }) {
 
         {/* trajectory line for multi-city trips */}
         {pathCities.length > 1 && (
-          <g>
-            <polyline
-              points={pathCities.map(c => `${c.x},${c.y}`).join(' ')}
-              fill="none"
-              stroke={accent}
-              strokeWidth="1.8"
-              strokeDasharray="4 4"
-              opacity="0.85"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke"
-            />
-            {pathCities.slice(0, -1).map((c, i) => (
-              <circle key={i} cx={c.x} cy={c.y} r={2.6 * zoomScale}
-                fill={accent} stroke={P.paper} strokeWidth="1.4"
-                vectorEffect="non-scaling-stroke"/>
-            ))}
-          </g>
+          <polyline
+            points={pathCities.map(c => `${c.x},${c.y}`).join(' ')}
+            fill="none"
+            stroke={accent}
+            strokeWidth="1.8"
+            strokeDasharray="4 4"
+            opacity="0.85"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
         )}
 
-        {/* active pin (final stop) — pulse */}
-        <g>
-          <circle cx={city.x} cy={city.y} r={(10 + pinPulse * 6) * zoomScale}
-            fill={accent} opacity={0.18 - pinPulse * 0.1}/>
-          <circle cx={city.x} cy={city.y} r={(4 + pinPulse * 1.2) * zoomScale}
-            fill={accent} opacity={0.35}/>
-          <circle cx={city.x} cy={city.y} r={3 * zoomScale} fill={accent}/>
-          <circle cx={city.x} cy={city.y} r={1.2 * zoomScale} fill={P.paper}/>
-        </g>
-
-        {/* city label (for primary/active pin) */}
-        <g transform={`translate(${city.x + 8 * zoomScale}, ${city.y - 4 * zoomScale})`}>
-          <rect x={-2 * zoomScale} y={-10 * zoomScale}
-            width={(city.label.length * 5.2 + 10) * zoomScale}
-            height={14 * zoomScale} fill={P.paper} opacity="0.85"/>
-          <text x={4 * zoomScale} y={0} fontSize={9 * zoomScale}
-            fontFamily='"JetBrains Mono", monospace'
-            fill={P.ink} letterSpacing={0.3 * zoomScale}>{city.label}</text>
-        </g>
+        {/* pins + labels for every city in the path; final stop pulses */}
+        {pathCities.map((c, i) => {
+          const isLast = i === pathCities.length - 1;
+          const labelW = (c.label.length * 5.2 + 10) * zoomScale;
+          return (
+            <g key={`pin-${i}`}>
+              {isLast && (
+                <>
+                  <circle cx={c.x} cy={c.y} r={(10 + pinPulse * 6) * zoomScale}
+                    fill={accent} opacity={0.18 - pinPulse * 0.1}/>
+                  <circle cx={c.x} cy={c.y} r={(4 + pinPulse * 1.2) * zoomScale}
+                    fill={accent} opacity={0.35}/>
+                </>
+              )}
+              <circle cx={c.x} cy={c.y} r={3 * zoomScale} fill={accent}
+                stroke={P.paper} strokeWidth="1.2"
+                vectorEffect="non-scaling-stroke"/>
+              <circle cx={c.x} cy={c.y} r={1.2 * zoomScale} fill={P.paper}/>
+              <g transform={`translate(${c.x + 8 * zoomScale}, ${c.y - 4 * zoomScale})`}>
+                <rect x={-2 * zoomScale} y={-10 * zoomScale}
+                  width={labelW} height={14 * zoomScale}
+                  fill={P.paper} opacity="0.9"/>
+                <text x={4 * zoomScale} y={0} fontSize={9 * zoomScale}
+                  fontFamily='"JetBrains Mono", monospace'
+                  fill={P.ink} letterSpacing={0.3 * zoomScale}>{c.label}</text>
+              </g>
+            </g>
+          );
+        })}
       </svg>
 
       {/* corner markers */}
