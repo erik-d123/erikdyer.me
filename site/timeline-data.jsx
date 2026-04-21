@@ -51,16 +51,6 @@ window.TIMELINE_EVENTS = [
     ],
   },
   {
-    id: 'thesis26', year: 2026, month: 'Feb',
-    title: 'Senior thesis kickoff',
-    city: 'princeton', category: 'research',
-    body: 'Started thesis with Prof. Karthik Narasimhan at Princeton NLP. Multi-agent systems; emergent coordination between LLM agents.',
-    photos: [
-      { caption: 'friend hall, 11pm', label: 'office' },
-    ],
-    links: [{ label: 'princeton nlp', href: '#' }],
-  },
-  {
     id: 'spain26', year: 2026, month: 'Jan',
     title: 'Spain — Madrid to Valencia',
     city: 'valencia', category: 'travel',
@@ -68,25 +58,6 @@ window.TIMELINE_EVENTS = [
     photos: [
       { caption: 'madrid rooftops',    src: 'site/photos/spain-2026-1.jpg' },
       { caption: 'valencia, albufera', src: 'site/photos/spain-2026-2.jpg' },
-    ],
-  },
-  {
-    id: 'ski25', year: 2025, month: 'Dec',
-    title: 'Ski trip — Aspen',
-    city: 'aspen', category: 'travel',
-    body: 'Annual family ski week in Aspen. Snow was deep; blue runs became black runs by Thursday.',
-    photos: [
-      { caption: 'top of ajax', label: 'ajax' },
-      { caption: 'sunrise groomer', label: 'groomer' },
-    ],
-  },
-  {
-    id: 'pvl25', year: 2025, month: 'Oct',
-    title: 'PVL Lab — CV research',
-    city: 'princeton', category: 'research',
-    body: 'Joined Jia Deng\'s PVL Lab. Working on SLAM and segmentation — spatial understanding of 3D scenes.',
-    photos: [
-      { caption: 'cs building at dusk', label: 'cs' },
     ],
   },
   {
@@ -106,31 +77,11 @@ window.TIMELINE_EVENTS = [
     city: 'seattle', category: 'work',
     body: 'Summer on the IAM team in Seattle. Identity & access at internet scale — auth flows, policy evaluation, scale testing.',
     photos: [
-      { caption: 'day one badge', label: 'badge' },
-      { caption: 'south lake union', label: 'slu' },
+      { caption: 'south lake union',  src: 'site/photos/amazon-2025-1.jpg' },
+      { caption: 'seattle, summer',   src: 'site/photos/amazon-2025-2.jpg' },
+      { caption: 'off-hours wander',  src: 'site/photos/amazon-2025-3.jpg' },
     ],
     links: [{ label: 'amazon.jobs', href: '#' }],
-  },
-  {
-    id: 'zermatt25', year: 2025, month: 'Mar',
-    title: 'Zermatt w/ roommates',
-    city: 'zermatt', category: 'travel',
-    body: 'Spring break skiing under the Matterhorn. 11 hours of travel for three of the best days.',
-    photos: [
-      { caption: 'matterhorn at 6:42am', label: 'matterhorn' },
-      { caption: 'klein matterhorn lift', label: 'lift' },
-    ],
-  },
-  {
-    id: 'brothergrad24', year: 2024, month: 'May',
-    title: "Brother's graduation",
-    city: 'cambridge', category: 'travel',
-    body: "Up to Cambridge for my brother's graduation. Proud sibling duty; lobster roll as reward.",
-    photos: [
-      { caption: 'commencement',  src: 'site/photos/brothergrad-2024-1.jpg' },
-      { caption: 'harvard yard',  src: 'site/photos/brothergrad-2024-2.jpg' },
-      { caption: 'post-ceremony', src: 'site/photos/brothergrad-2024-3.jpg' },
-    ],
   },
   {
     id: 'bluehalo24', year: 2024, month: 'May',

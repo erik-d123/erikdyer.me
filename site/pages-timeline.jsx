@@ -111,14 +111,18 @@ window.TimelinePage = function TimelinePage({ palette, mode }) {
           <MapCard palette={P} accent={pin} city={city} t={t} event={selected} mode={mode} />
 
           {/* PHOTOS + STICKY */}
-          <div style={{
-            position: 'relative', marginTop: 28, minHeight: 260,
-          }}>
+          <div style={{ marginTop: 28 }}>
             <div key={selected.id} style={{
               animation: 'pageIn 500ms ease-out',
+              display: 'flex', flexWrap: 'wrap', gap: 36,
+              alignItems: 'flex-start', paddingTop: 14,
             }}>
-              <PhotosRow photos={selected.photos || []} palette={P} accent={pin} />
-              <StickyNote event={selected} palette={P} accent={pin} />
+              <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+                <PhotosRow photos={selected.photos || []} palette={P} accent={pin} />
+              </div>
+              <div style={{ flex: '0 1 320px', minWidth: 260 }}>
+                <StickyNote event={selected} palette={P} accent={pin} />
+              </div>
             </div>
           </div>
         </div>
@@ -273,8 +277,8 @@ function PhotosRow({ photos, palette, accent }) {
 
   return (
     <div style={{
-      position: 'absolute', left: -8, top: 10,
-      display: 'flex', gap: 12, alignItems: 'flex-start', zIndex: 2,
+      display: 'flex', flexWrap: 'wrap', gap: 16,
+      alignItems: 'flex-start', marginLeft: -4,
     }}>
       {photos.map((p, i) => (
         <Polaroid key={i} photo={p} idx={i} rotate={rotations[i % 4]}
@@ -446,12 +450,13 @@ function StickyNote({ event, palette, accent }) {
   const P = palette;
   return (
     <div style={{
-      position: 'absolute', right: 8, top: 180, width: 300,
+      position: 'relative', width: '100%',
       background: 'oklch(0.96 0.05 88)',
       padding: '20px 22px 22px',
       boxShadow: '0 4px 14px rgba(0,0,0,0.09), 0 1px 2px rgba(0,0,0,0.06)',
       transform: 'rotate(1.5deg)',
       fontFamily: 'Inter, sans-serif',
+      marginTop: 12,
     }}>
       {/* tape */}
       <div style={{
