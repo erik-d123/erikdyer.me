@@ -8,7 +8,7 @@ window.TimelinePage = function TimelinePage({ palette, mode }) {
 
   const [selectedId, setSelectedId] = React.useState(events[1].id); // Taiwan by default
   const selected = events.find(e => e.id === selectedId) || events[0];
-  const city = window.CITIES[selected.city];
+  const city = window.CITIES[selected.city] || window.CITIES.remote;
 
   // Group events by year
   const grouped = React.useMemo(() => {
@@ -286,7 +286,7 @@ function PhotosRow({ photos, palette, accent }) {
 
 function Polaroid({ photo, idx, rotate, palette, accent }) {
   const P = palette;
-  // generate a unique placeholder gradient from the label string
+  // generate a unique placeholder gradient from the label string (fallback mode)
   const seed = photo.label || photo.caption || '';
   const hue = (seed.charCodeAt(0) + seed.length * 17) % 360;
   const hue2 = (hue + 40) % 360;
@@ -306,21 +306,44 @@ function Polaroid({ photo, idx, rotate, palette, accent }) {
         background: accent,
         boxShadow: '0 1px 2px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.3)',
       }}/>
-      <div style={{
-        width: '100%', aspectRatio: '1 / 1',
-        background: `linear-gradient(135deg,
-          oklch(0.72 0.08 ${hue}) 0%,
-          oklch(0.58 0.10 ${hue2}) 100%)`,
-        position: 'relative', overflow: 'hidden',
-      }}>
-        <PhotoGlyph label={photo.label} />
-        {/* film grain */}
+      {photo.src ? (
         <div style={{
-          position: 'absolute', inset: 0,
-          background: `radial-gradient(ellipse at 30% 20%,
-            rgba(255,255,255,0.15) 0%, transparent 50%)`,
-        }}/>
-      </div>
+          width: '100%', aspectRatio: '1 / 1',
+          background: '#1a1a18', position: 'relative', overflow: 'hidden',
+        }}>
+          <img src={photo.src} alt={photo.caption}
+            loading="lazy"
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+              filter: 'saturate(0.95) contrast(1.02)',
+            }}
+          />
+          {/* subtle vignette for polaroid feel */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: `radial-gradient(ellipse at 30% 20%,
+              rgba(255,255,255,0.10) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 100%,
+              rgba(0,0,0,0.18) 0%, transparent 60%)`,
+          }}/>
+        </div>
+      ) : (
+        <div style={{
+          width: '100%', aspectRatio: '1 / 1',
+          background: `linear-gradient(135deg,
+            oklch(0.72 0.08 ${hue}) 0%,
+            oklch(0.58 0.10 ${hue2}) 100%)`,
+          position: 'relative', overflow: 'hidden',
+        }}>
+          <PhotoGlyph label={photo.label} />
+          {/* film grain */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: `radial-gradient(ellipse at 30% 20%,
+              rgba(255,255,255,0.15) 0%, transparent 50%)`,
+          }}/>
+        </div>
+      )}
       <div style={{
         position: 'absolute', bottom: 6, left: 12, right: 12,
         fontFamily: '"Fraunces", serif', fontStyle: 'italic', fontSize: 11,
