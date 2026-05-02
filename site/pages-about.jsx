@@ -1,12 +1,19 @@
 // pages-about.jsx
 
-window.PageShell = function PageShell({ palette, plate, title, subtitle, accent, mode, page, children }) {
+window.PageShell = function PageShell({ palette, title, subtitle, accent, children }) {
   const P = palette;
+  const { width } = window.useViewport();
+  const compact = width < 900;
+  const narrow = width < 640;
   return (
     <div key={title} style={{ animation: 'pageIn 500ms ease-out both' }}>
       <div style={{
-        padding: '60px 72px 32px', borderBottom: `1px solid ${P.rule}`,
-        display: 'grid', gridTemplateColumns: '1fr 260px', gap: 40, alignItems: 'end',
+        padding: compact ? '34px 24px 24px' : '60px 72px 32px',
+        borderBottom: `1px solid ${P.rule}`,
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gap: compact ? 20 : 40,
+        alignItems: 'end',
       }}>
         <div>
           <div style={{
@@ -14,37 +21,37 @@ window.PageShell = function PageShell({ palette, plate, title, subtitle, accent,
             color: P.inkMute, marginBottom: 14,
           }}>
             <span style={{ color: accent }}>●</span>
-            <span style={{ marginLeft: 10 }}>PLATE {plate} ·</span>
-            <span style={{ marginLeft: 8 }}>{title.toUpperCase()}</span>
+            <span style={{ marginLeft: 10 }}>{title.toUpperCase()}</span>
           </div>
           <h1 style={{
             margin: 0, fontFamily: '"Fraunces", Georgia, serif', fontWeight: 400,
-            fontSize: 64, lineHeight: 1, letterSpacing: -1.6, color: P.ink,
+            fontSize: narrow ? 42 : 'clamp(48px, 7vw, 64px)',
+            lineHeight: 1, letterSpacing: -1.2, color: P.ink,
             textWrap: 'pretty',
           }}>{subtitle}</h1>
         </div>
-        {/* mini figure echo in the header, tinted */}
-        <div style={{ color: accent, opacity: 0.35, height: 120, overflow: 'hidden' }}>
-          <window.Figure mode={mode} page={page} color={accent}
-            style={{ width: '100%', height: 260, marginTop: -70 }} />
-        </div>
       </div>
-      <div style={{ padding: '48px 72px 96px' }}>{children}</div>
+      <div style={{ padding: compact ? '30px 24px 72px' : '48px 72px 96px' }}>{children}</div>
     </div>
   );
 };
 
-window.AboutPage = function AboutPage({ palette, setPage, mode }) {
+window.AboutPage = function AboutPage({ palette, setPage }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.about];
+  const { width } = window.useViewport();
+  const compact = width < 900;
 
   return (
-    <window.PageShell palette={P} plate="I" page="about" mode={mode}
+    <window.PageShell palette={P}
       title="about" accent={accent}
-      subtitle={<>Junior at <em style={{ color: accent }}>Princeton</em>, studying ECE and Neuroscience. I build AI systems and think a lot about how biology got there first.</>}
+      subtitle={<>I build the parts around <em style={{ color: accent }}>AI</em> that make it testable, usable, and hard to hand-wave.</>}
     >
       <div style={{
-        display: 'grid', gridTemplateColumns: '1.35fr 1fr', gap: 64, maxWidth: 1080,
+        display: 'grid',
+        gridTemplateColumns: compact ? '1fr' : '1.35fr 1fr',
+        gap: compact ? 28 : 64,
+        maxWidth: 1080,
         alignItems: 'start',
       }}>
         <div style={{
@@ -52,13 +59,13 @@ window.AboutPage = function AboutPage({ palette, setPage, mode }) {
           color: P.inkSoft, textWrap: 'pretty',
         }}>
           <p style={{ marginTop: 0 }}>
-            I'm most interested in where <span style={{ color: P.ink, fontWeight: 500 }}>intelligent systems</span> meet <span style={{ color: P.ink, fontWeight: 500 }}>living ones</span>. That shows up for me as LLM agents that have to coordinate, computer-vision stacks trying to understand 3D space, and the quiet infrastructure that lets any of it actually run.
+            I'm Erik, a Princeton ECE junior. My work sits between research and systems engineering: <span style={{ color: P.ink, fontWeight: 500 }}>LLM agent evaluation</span>, <span style={{ color: P.ink, fontWeight: 500 }}>3D perception</span>, reinforcement learning, and infrastructure.
           </p>
           <p>
-            Summers I work on infra teams at big companies (<span style={{ color: P.ink }}>BlueHalo</span>, <span style={{ color: P.ink }}>Amazon</span>, <span style={{ color: P.ink }}>Databricks</span>). Semesters I'm in two labs at Princeton. In between I read a lot of Cajal plates and old papers and try to build small things.
+            I tend to end up where vague model claims need to become tests, data pipelines, or deployment constraints. In research, that has meant long-horizon agents, long-context evaluations, and synthetic LiDAR pipelines. In industry, it has meant ML ingestion, AWS IAM, and next, Unity Catalog at Databricks.
           </p>
           <p style={{ marginBottom: 0 }}>
-            If you care about any of this — agents, vision, systems, biology — say hi.
+            I care about work that can survive contact with real tasks, messy data, and precise evaluation.
           </p>
         </div>
 
@@ -71,12 +78,12 @@ window.AboutPage = function AboutPage({ palette, setPage, mode }) {
             color: P.inkMute, marginBottom: 16,
           }}>// FIELD NOTES</div>
           {[
-            ['field',    'ECE + Neuroscience'],
+            ['field',    'AI systems + infra'],
             ['class',    '2027'],
             ['labs',     'Princeton NLP · PVL'],
             ['summers',  'BlueHalo → Amazon → Databricks'],
             ['location', 'Princeton, NJ'],
-            ['stack',    'Python · Rust · TypeScript · C'],
+            ['stack',    'Python · Java · Rust · TypeScript · C'],
           ].map(([k, v], i) => (
             <div key={k} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
@@ -91,13 +98,16 @@ window.AboutPage = function AboutPage({ palette, setPage, mode }) {
       </div>
 
       <div style={{
-        marginTop: 72, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20,
+        marginTop: compact ? 44 : 72,
+        display: 'grid',
+        gridTemplateColumns: compact ? '1fr' : 'repeat(3, 1fr)',
+        gap: 20,
         maxWidth: 1080,
       }}>
         {[
-          { key: 'research', plate: 'II',  label: 'research',  note: 'Two labs, senior thesis in progress.', acc: A[window.PAGE_ACCENT.research], n: '02' },
-          { key: 'work',     plate: 'III', label: 'work',      note: 'Three summers on infrastructure teams.', acc: A[window.PAGE_ACCENT.work], n: '03' },
-          { key: 'projects', plate: 'IV',  label: 'projects',  note: 'Small systems I build for myself.', acc: A[window.PAGE_ACCENT.projects], n: '04' },
+          { key: 'research', label: 'research', note: 'Agent evaluation, long-context reasoning, and 3D vision.', acc: A[window.PAGE_ACCENT.research] },
+          { key: 'work',     label: 'work',     note: 'Infrastructure internships across ML data, identity, and governance.', acc: A[window.PAGE_ACCENT.work] },
+          { key: 'projects', label: 'projects', note: 'Real coursework, research, and systems engineering artifacts.', acc: A[window.PAGE_ACCENT.projects] },
         ].map(c => (
           <button key={c.key} onClick={() => setPage(c.key)} style={{
             textAlign: 'left', background: P.paper, border: `1px solid ${P.rule}`,
@@ -110,7 +120,7 @@ window.AboutPage = function AboutPage({ palette, setPage, mode }) {
             <div style={{
               fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
               letterSpacing: 1.4, color: c.acc, marginBottom: 18,
-            }}>PLATE {c.plate} → {c.n}</div>
+            }}>OPEN {c.label.toUpperCase()}</div>
             <div style={{
               fontFamily: '"Fraunces", serif', fontSize: 28, letterSpacing: -0.6,
               color: P.ink, marginBottom: 6, fontWeight: 400,

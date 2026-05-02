@@ -1,10 +1,13 @@
-// site/pages-timeline.jsx — microblog timeline with map + polaroids
+// site/pages-timeline.jsx: microblog timeline with map + polaroids
 
-window.TimelinePage = function TimelinePage({ palette, mode }) {
+window.TimelinePage = function TimelinePage({ palette }) {
   const P = palette;
   const A = window.ACCENTS;
   const pin = A[window.PAGE_ACCENT.timeline || 'coral'];
   const events = window.TIMELINE_EVENTS;
+  const { width } = window.useViewport();
+  const compact = width < 920;
+  const narrow = width < 640;
 
   const [selectedId, setSelectedId] = React.useState(events[1].id); // Taiwan by default
   const selected = events.find(e => e.id === selectedId) || events[0];
@@ -20,16 +23,22 @@ window.TimelinePage = function TimelinePage({ palette, mode }) {
   const t = window.useTick();
 
   return (
-    <div style={{ padding: '70px 60px 120px', maxWidth: 1400, margin: '0 auto' }}>
+    <div style={{
+      padding: narrow ? '36px 22px 80px' : compact ? '52px 34px 96px' : '70px 60px 120px',
+      maxWidth: 1400,
+      margin: '0 auto',
+    }}>
       {/* Header */}
       <div style={{ marginBottom: 48 }}>
         <div style={{
           fontFamily: '"JetBrains Mono", monospace', fontSize: 10, letterSpacing: 2,
           color: P.inkMute, marginBottom: 14,
-        }}>PLATE V · CHRONOLOGY</div>
+        }}>CHRONOLOGY</div>
         <div style={{
-          fontFamily: '"Fraunces", Georgia, serif', fontSize: 72,
-          letterSpacing: -2, lineHeight: 0.95, color: P.ink, fontWeight: 400,
+          fontFamily: '"Fraunces", Georgia, serif',
+          fontSize: narrow ? 46 : compact ? 58 : 72,
+          letterSpacing: narrow ? -1 : -2,
+          lineHeight: 0.95, color: P.ink, fontWeight: 400,
           marginBottom: 22,
         }}>
           A timeline, of sorts.
@@ -38,20 +47,24 @@ window.TimelinePage = function TimelinePage({ palette, mode }) {
           maxWidth: 620, fontSize: 15, lineHeight: 1.7, color: P.inkSoft,
         }}>
           A microblog of places I've been and work I've done. Click an event to
-          pin it on the map — the world is mostly a pretext for the photos and the notes.
+          pin it on the map. The world is mostly a pretext for the photos and the notes.
         </div>
       </div>
 
       {/* Main 2-col layout */}
       <div style={{
-        display: 'grid', gridTemplateColumns: '340px 1fr', gap: 56,
+        display: 'grid',
+        gridTemplateColumns: compact ? '1fr' : '340px 1fr',
+        gap: compact ? 32 : 56,
         alignItems: 'start',
       }}>
-        {/* LEFT — event list */}
+        {/* LEFT: event list */}
         <div style={{
           borderTop: `1px solid ${P.rule}`,
           borderBottom: `1px solid ${P.rule}`,
           paddingTop: 18, paddingBottom: 8,
+          maxHeight: compact ? 'none' : 'calc(100vh - 210px)',
+          overflowY: compact ? 'visible' : 'auto',
         }}>
           {grouped.map(([year, evs], gi) => (
             <div key={year} style={{ marginBottom: 28 }}>
@@ -105,10 +118,10 @@ window.TimelinePage = function TimelinePage({ palette, mode }) {
           ))}
         </div>
 
-        {/* RIGHT — map + photos + note */}
+        {/* RIGHT: map + photos + note */}
         <div style={{ position: 'relative' }}>
           {/* MAP */}
-          <MapCard palette={P} accent={pin} city={city} t={t} event={selected} mode={mode} />
+          <MapCard palette={P} accent={pin} city={city} t={t} event={selected} />
 
           {/* PHOTOS + STICKY */}
           <div style={{ marginTop: 28 }}>
@@ -134,9 +147,9 @@ window.TimelinePage = function TimelinePage({ palette, mode }) {
 };
 
 // ─────────────────────────────────────────────────────────────
-// MAP — cream-colored stylized world map with pin
+// MAP: cream-colored stylized world map with pin
 // ─────────────────────────────────────────────────────────────
-function MapCard({ palette, accent, city, t, event, mode }) {
+function MapCard({ palette, accent, city, t, event }) {
   const P = palette;
   const mapW = 960, mapH = 500;
   const aspect = mapH / mapW;
@@ -210,7 +223,7 @@ function MapCard({ palette, accent, city, t, event, mode }) {
           display: 'block',
           cursor: zoomed ? 'zoom-out' : 'zoom-in',
         }}>
-        {/* graticule — non-scaling-stroke keeps lines thin regardless of zoom */}
+        {/* graticule: non-scaling-stroke keeps lines thin regardless of zoom */}
         <g stroke={P.rule} strokeWidth="0.6" opacity="0.6" vectorEffect="non-scaling-stroke">
           {[0, 1, 2, 3, 4, 5].map(i => (
             <line key={'h'+i} x1="0" x2={mapW} y1={i * mapH / 5} y2={i * mapH / 5} vectorEffect="non-scaling-stroke"/>
@@ -296,7 +309,7 @@ function MapCard({ palette, accent, city, t, event, mode }) {
         position: 'absolute', bottom: 10, left: 12,
         fontFamily: '"Fraunces", serif', fontStyle: 'italic', fontSize: 11,
         color: P.inkMute,
-      }}>fig. v — {event.category}</div>
+      }}>{event.category}</div>
     </div>
   );
 }
@@ -327,7 +340,7 @@ function computeViewBox(cities, mapW, mapH) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// POLAROIDS — rotated photo placeholders
+// POLAROIDS: rotated photo fallbacks
 // ─────────────────────────────────────────────────────────────
 function PhotosRow({ photos, palette, accent }) {
   const P = palette;
@@ -349,7 +362,7 @@ function PhotosRow({ photos, palette, accent }) {
 
 function Polaroid({ photo, idx, rotate, palette, accent }) {
   const P = palette;
-  // generate a unique placeholder gradient from the label string (fallback mode)
+  // Generate a unique fallback gradient from the label string.
   const seed = photo.label || photo.caption || '';
   const hue = (seed.charCodeAt(0) + seed.length * 17) % 360;
   const hue2 = (hue + 40) % 360;
@@ -490,7 +503,7 @@ function PhotoGlyph({ label }) {
       </svg>
     );
   }
-  // default — abstract landscape
+  // Default abstract landscape.
   return (
     <svg viewBox="0 0 100 100" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <g stroke="rgba(255,255,255,0.5)" fill="none" strokeWidth="1">
@@ -503,7 +516,7 @@ function PhotoGlyph({ label }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// STICKY NOTE — event body + links
+// STICKY NOTE: event body + links
 // ─────────────────────────────────────────────────────────────
 function StickyNote({ event, palette, accent }) {
   const P = palette;

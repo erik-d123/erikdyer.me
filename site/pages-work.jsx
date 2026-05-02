@@ -1,8 +1,10 @@
 // pages-work.jsx
 
-window.WorkPage = function WorkPage({ palette, mode }) {
+window.WorkPage = function WorkPage({ palette }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.work];
+  const { width } = window.useViewport();
+  const compact = width < 760;
 
   const jobs = [
     {
@@ -10,9 +12,9 @@ window.WorkPage = function WorkPage({ palette, mode }) {
       role: 'Software Engineer Intern',
       team: 'Unity Catalog',
       loc: 'Seattle, WA',
-      period: 'May 2026 — Aug 2026',
-      tag: 'upcoming',
-      desc: 'Working on Unity Catalog — governance, lineage, and access control for data and AI assets at data-lake scale.',
+      period: 'May 2026 to Aug 2026',
+      tag: 'incoming',
+      desc: 'Incoming on Unity Catalog, the governance, lineage, and access-control layer for data and AI assets at lake scale.',
       stack: ['scala', 'spark', 'catalog', 'distributed systems'],
     },
     {
@@ -20,46 +22,47 @@ window.WorkPage = function WorkPage({ palette, mode }) {
       role: 'Software Development Engineer Intern',
       team: 'Identity & Access Management',
       loc: 'Seattle, WA',
-      period: 'May 2025 — Aug 2025',
-      desc: 'Shipped improvements to AWS IAM — auth at internet scale, where a one-in-a-million edge case happens many thousands of times per second.',
+      period: 'May 2025 to Aug 2025',
+      desc: 'Worked on AWS IAM, where authorization edge cases happen at internet scale and correctness has to hold under extremely high request volume.',
       stack: ['java', 'aws', 'authz', 'distributed services'],
     },
     {
       co: 'BlueHalo',
       role: 'Software Engineer Intern',
-      team: 'MLOps — Data Ingestion',
+      team: 'MLOps, Data Ingestion',
       loc: 'Remote',
-      period: 'May 2024 — Aug 2024',
-      desc: 'Designed and built ETL ingestion pipelines feeding downstream ML workloads — moving terabytes of heterogeneous sensor data into a shape models could actually learn from.',
+      period: 'May 2024 to Aug 2024',
+      desc: 'Designed and built ETL ingestion pipelines for downstream ML workloads, moving heterogeneous sensor data into a shape models could learn from.',
       stack: ['python', 'airflow', 'etl', 'sensor data'],
     },
   ];
 
   return (
-    <window.PageShell palette={P} plate="III" page="work" mode={mode}
+    <window.PageShell palette={P}
       title="work" accent={accent}
-      subtitle={<>Three summers. Three <em style={{ color: accent }}>infrastructure</em> teams. A pattern I didn't plan but will happily claim.</>}
+      subtitle={<>Three summers, three <em style={{ color: accent }}>infrastructure</em> teams. ML data, identity, and governance.</>}
     >
       <div style={{ maxWidth: 1040, position: 'relative' }}>
-        <div style={{
+        {!compact && <div style={{
           position: 'absolute', left: 180, top: 0, bottom: 0, width: 1,
           background: P.rule,
-        }} />
+        }} />}
         {jobs.map((j, i) => (
           <article key={j.co} style={{
             position: 'relative', display: 'grid',
-            gridTemplateColumns: '160px 40px 1fr', gap: 0,
+            gridTemplateColumns: compact ? '1fr' : '160px 40px 1fr',
+            gap: compact ? 14 : 0,
             padding: '36px 0', borderBottom: i === jobs.length - 1 ? 'none' : `1px dashed ${P.rule}`,
           }}>
             <div>
               <div style={{
                 fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
                 color: accent, letterSpacing: 0.8, marginBottom: 6,
-              }}>{j.period.split(' — ')[0]}</div>
+              }}>{j.period.split(' to ')[0]}</div>
               <div style={{
                 fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
                 color: P.inkMute, letterSpacing: 0.8,
-              }}>— {j.period.split(' — ')[1]}</div>
+              }}>to {j.period.split(' to ')[1]}</div>
               {j.tag && (
                 <div style={{
                   display: 'inline-block', marginTop: 10,
@@ -69,15 +72,15 @@ window.WorkPage = function WorkPage({ palette, mode }) {
                 }}>{j.tag.toUpperCase()}</div>
               )}
             </div>
-            <div style={{ position: 'relative' }}>
+            {!compact && <div style={{ position: 'relative' }}>
               <div style={{
                 position: 'absolute', left: 16, top: 6,
                 width: 14, height: 14, borderRadius: '50%',
                 background: P.bg, border: `2px solid ${accent}`,
                 boxShadow: `0 0 0 5px ${accent.replace(')', ' / 0.12)')}`,
               }} />
-            </div>
-            <div style={{ paddingLeft: 24 }}>
+            </div>}
+            <div style={{ paddingLeft: compact ? 0 : 24 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
                 <h2 style={{
                   margin: 0, fontFamily: '"Fraunces", serif', fontWeight: 400,
@@ -126,12 +129,13 @@ window.WorkPage = function WorkPage({ palette, mode }) {
             letterSpacing: -0.4, color: P.ink,
           }}>Full resume, one page.</div>
         </div>
-        <a href="#" onClick={(e) => e.preventDefault()} style={{
+        <a href="https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=sharing"
+          target="_blank" rel="noopener noreferrer" style={{
           textDecoration: 'none', padding: '12px 22px',
           background: P.ink, color: P.bg, fontFamily: 'Inter, sans-serif',
           fontSize: 14, fontWeight: 500, letterSpacing: 0.2,
           display: 'inline-flex', alignItems: 'center', gap: 10,
-        }}>⤓ resume.pdf</a>
+        }}>resume.pdf ↗</a>
       </div>
     </window.PageShell>
   );

@@ -25,6 +25,14 @@
     from { opacity: 0; transform: translateX(12px); }
     to   { opacity: 1; transform: translateX(0); }
   }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 
   .app-scroll::-webkit-scrollbar { width: 10px; }
   .app-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -48,21 +56,20 @@
 <script type="text/babel" src="site/pages-timeline.jsx"></script>
 
 <script type="text/babel" data-presets="react">
-const DEFAULTS = { palette: 'cream', accent: 'coral', mode: 'neuro' };
+const DEFAULTS = { palette: 'cream', accent: 'coral' };
 
 function App() {
   const [page, setPage]             = React.useState(() => localStorage.getItem('ed_page')    || 'about');
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem('ed_palette') || DEFAULTS.palette);
   const [accentKey, setAccentKey]   = React.useState(() => localStorage.getItem('ed_accent')  || DEFAULTS.accent);
-  const [mode, setMode]             = React.useState(() => localStorage.getItem('ed_mode')    || DEFAULTS.mode);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
 
   React.useEffect(() => { localStorage.setItem('ed_page',    page); },       [page]);
   React.useEffect(() => { localStorage.setItem('ed_palette', paletteKey); }, [paletteKey]);
   React.useEffect(() => { localStorage.setItem('ed_accent',  accentKey); },  [accentKey]);
-  React.useEffect(() => { localStorage.setItem('ed_mode',    mode); },       [mode]);
-
   const palette = window.PALETTES[paletteKey] || window.PALETTES.cream;
+  const viewport = window.useViewport();
+  const compact = viewport.width < 900;
 
   const PageComp = {
     about:    window.AboutPage,
@@ -76,15 +83,16 @@ function App() {
     <div style={{
       display: 'flex', minHeight: '100vh', background: palette.bg,
       color: palette.ink, fontFamily: 'Inter, system-ui, sans-serif',
+      flexDirection: compact ? 'column' : 'row',
     }}>
       <window.Sidebar page={page} setPage={setPage}
-        palette={palette} accentKey={accentKey} mode={mode} />
+        palette={palette} accentKey={accentKey} compact={compact} />
 
       <main className="app-scroll" style={{
         flex: 1, minWidth: 0, background: palette.bg,
-        overflowY: 'auto', height: '100vh',
+        overflowY: 'auto', height: compact ? 'auto' : '100vh',
       }}>
-        <PageComp palette={palette} setPage={setPage} mode={mode} />
+        <PageComp palette={palette} setPage={setPage} />
       </main>
 
       <TweaksToggle open={tweaksOpen} onToggle={() => setTweaksOpen(o => !o)} palette={palette} />
@@ -94,10 +102,8 @@ function App() {
           palette={palette}
           paletteKey={paletteKey}
           accentKey={accentKey}
-          mode={mode}
           onPalette={setPaletteKey}
           onAccent={setAccentKey}
-          onMode={setMode}
           onClose={() => setTweaksOpen(false)}
         />
       )}
@@ -129,7 +135,7 @@ function TweaksToggle({ open, onToggle, palette }) {
   );
 }
 
-function TweaksPanel({ palette, paletteKey, accentKey, mode, onPalette, onAccent, onMode }) {
+function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
   const P = palette, A = window.ACCENTS;
   return (
     <div style={{
@@ -143,34 +149,6 @@ function TweaksPanel({ palette, paletteKey, accentKey, mode, onPalette, onAccent
         fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
         letterSpacing: 1.4, color: P.inkMute, marginBottom: 12,
       }}>// TWEAKS</div>
-
-      <div style={{
-        fontFamily: '"Fraunces", serif', fontSize: 13, color: P.ink,
-        marginBottom: 8, letterSpacing: -0.1,
-      }}>Illustration mode</div>
-      <div style={{ display: 'flex', gap: 6, marginBottom: 18 }}>
-        {[
-          { k: 'neuro',   label: 'neuro',    sub: 'cajal plates' },
-          { k: 'compbio', label: 'comp-bio', sub: 'dna · protein · net' },
-        ].map(m => {
-          const active = mode === m.k;
-          return (
-            <button key={m.k} onClick={() => onMode(m.k)} style={{
-              flex: 1, padding: '10px 10px', cursor: 'pointer',
-              background: P.bg, border: `1px solid ${active ? P.ink : P.rule}`,
-              borderRadius: 0, textAlign: 'left',
-              fontFamily: 'Inter, sans-serif', fontSize: 11,
-              color: P.ink,
-              boxShadow: active ? `inset 0 0 0 1px ${P.ink}` : 'none',
-            }}>
-              <div style={{ fontWeight: 500 }}>{m.label}</div>
-              <div style={{ fontSize: 9, color: P.inkMute, marginTop: 2, fontFamily: '"JetBrains Mono", monospace' }}>
-                {m.sub}
-              </div>
-            </button>
-          );
-        })}
-      </div>
 
       <div style={{
         fontFamily: '"Fraunces", serif', fontSize: 13, color: P.ink,
@@ -229,7 +207,7 @@ function TweaksPanel({ palette, paletteKey, accentKey, mode, onPalette, onAccent
         fontFamily: '"JetBrains Mono", monospace', fontSize: 9,
         color: P.inkMute, lineHeight: 1.5, letterSpacing: 0.2,
       }}>
-        accent drives the live signal in the sidebar. switch between paper moods with a click.
+        accent changes section emphasis. paper changes the mood.
       </div>
     </div>
   );
