@@ -42,7 +42,7 @@ Known improvement target: responsive behavior. The fixed sidebar and large headi
 - `PageShell`: shared frame header and body padding.
 - Section pages: About, Research, Work, Projects, Timeline.
 - Timeline components: map card, polaroids, sticky note.
-- Tweaks panel: optional theme/diagram controls. This is secondary and should never obscure core content on small screens.
+- Tweaks panel: optional paper and accent controls. This is secondary and should never obscure core content on small screens.
 
 ## Motion
 

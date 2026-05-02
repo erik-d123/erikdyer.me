@@ -45,7 +45,7 @@ window.AboutPage = function AboutPage({ palette, setPage }) {
   return (
     <window.PageShell palette={P}
       title="about" accent={accent}
-      subtitle={<>I build the parts around <em style={{ color: accent }}>AI</em> that make it testable, usable, and hard to hand-wave.</>}
+      subtitle={<>I work on <em style={{ color: accent }}>AI systems</em> that need to be measured, debugged, and shipped.</>}
     >
       <div style={{
         display: 'grid',
@@ -59,13 +59,13 @@ window.AboutPage = function AboutPage({ palette, setPage }) {
           color: P.inkSoft, textWrap: 'pretty',
         }}>
           <p style={{ marginTop: 0 }}>
-            I'm Erik, a Princeton ECE junior. My work sits between research and systems engineering: <span style={{ color: P.ink, fontWeight: 500 }}>LLM agent evaluation</span>, <span style={{ color: P.ink, fontWeight: 500 }}>3D perception</span>, reinforcement learning, and infrastructure.
+            I'm a junior in Princeton ECE. I split my time between NLP research, vision research, systems coursework, and infrastructure internships.
           </p>
           <p>
-            I tend to end up where vague model claims need to become tests, data pipelines, or deployment constraints. In research, that has meant long-horizon agents, long-context evaluations, and synthetic LiDAR pipelines. In industry, it has meant ML ingestion, AWS IAM, and next, Unity Catalog at Databricks.
+            The common thread is practical evaluation. I like work where the first answer is not enough: long-horizon agents that need a real benchmark, LiDAR pipelines that need clean data contracts, infrastructure that has to stay correct under scale.
           </p>
           <p style={{ marginBottom: 0 }}>
-            I care about work that can survive contact with real tasks, messy data, and precise evaluation.
+            Recently that has meant LLM agents in Princeton NLP, synthetic indoor LiDAR in PVL, AWS IAM, and Unity Catalog at Databricks.
           </p>
         </div>
 
@@ -76,14 +76,14 @@ window.AboutPage = function AboutPage({ palette, setPage }) {
           <div style={{
             fontFamily: '"JetBrains Mono", monospace', fontSize: 10, letterSpacing: 1.4,
             color: P.inkMute, marginBottom: 16,
-          }}>// FIELD NOTES</div>
+          }}>// CURRENT SNAPSHOT</div>
           {[
-            ['field',    'AI systems + infra'],
-            ['class',    '2027'],
-            ['labs',     'Princeton NLP · PVL'],
-            ['summers',  'BlueHalo → Amazon → Databricks'],
-            ['location', 'Princeton, NJ'],
-            ['stack',    'Python · Java · Rust · TypeScript · C'],
+            ['school',   'Princeton ECE, 2027'],
+            ['research', 'LLM agents · 3D perception'],
+            ['labs',     'NLP · Vision & Learning'],
+            ['industry', 'Databricks · Amazon · BlueHalo'],
+            ['focus',    'evals · data pipelines · infra'],
+            ['tools',    'Python · Java · Rust · TypeScript · C'],
           ].map(([k, v], i) => (
             <div key={k} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
@@ -105,9 +105,9 @@ window.AboutPage = function AboutPage({ palette, setPage }) {
         maxWidth: 1080,
       }}>
         {[
-          { key: 'research', label: 'research', note: 'Agent evaluation, long-context reasoning, and 3D vision.', acc: A[window.PAGE_ACCENT.research] },
-          { key: 'work',     label: 'work',     note: 'Infrastructure internships across ML data, identity, and governance.', acc: A[window.PAGE_ACCENT.work] },
-          { key: 'projects', label: 'projects', note: 'Real coursework, research, and systems engineering artifacts.', acc: A[window.PAGE_ACCENT.projects] },
+          { key: 'research', label: 'research', note: 'LLM agents, long-context evaluation, and 3D perception', acc: A[window.PAGE_ACCENT.research] },
+          { key: 'work',     label: 'work',     note: 'Databricks, Amazon IAM, and BlueHalo ML infrastructure', acc: A[window.PAGE_ACCENT.work] },
+          { key: 'projects', label: 'projects', note: 'Coursework and research code worth opening', acc: A[window.PAGE_ACCENT.projects] },
         ].map(c => (
           <button key={c.key} onClick={() => setPage(c.key)} style={{
             textAlign: 'left', background: P.paper, border: `1px solid ${P.rule}`,
@@ -120,11 +120,11 @@ window.AboutPage = function AboutPage({ palette, setPage }) {
             <div style={{
               fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
               letterSpacing: 1.4, color: c.acc, marginBottom: 18,
-            }}>OPEN {c.label.toUpperCase()}</div>
+            }}>{c.label.toUpperCase()}</div>
             <div style={{
               fontFamily: '"Fraunces", serif', fontSize: 28, letterSpacing: -0.6,
               color: P.ink, marginBottom: 6, fontWeight: 400,
-            }}>{c.label}.</div>
+            }}>{c.label}</div>
             <div style={{ fontSize: 13, color: P.inkSoft, lineHeight: 1.55 }}>{c.note}</div>
             <div style={{
               position: 'absolute', top: 22, right: 24, fontSize: 18, color: c.acc,
