@@ -590,12 +590,12 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   const contactLinks = window.CONTACT_LINKS;
   const projects = [
     {
-      name: "Grounded agent memory",
-      tagline: "Long-horizon browser-agent evaluation.",
-      desc: "Course and research project on handoff memory for long-running agents. The work centers on WebArena-style tasks, validator design, and whether remembered context actually improves task completion.",
-      stack: ["python", "browsergym", "agents"],
+      name: "Inter-Agent Alignment",
+      tagline: "Wisdom of the crowds, applied at inference time",
+      desc: "NLP research on aligning LLM agents through aggregation. Treating wisdom of the crowds as the inference algorithm: many sampled rollouts combined into a single decision rather than trusting any one agent in isolation",
+      stack: ["python", "llm agents", "inference"],
       status: "research",
-      proof: "Private/course project"
+      proof: "NLP research"
     },
     {
       name: "HELMET long-context evals",
@@ -607,9 +607,9 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
       href: "https://github.com/erik-d123/HELMET"
     },
     {
-      name: "Indoor LiDAR pipeline",
-      tagline: "Synthetic scenes, real evaluation contracts.",
-      desc: "Research engineering for indoor 3D perception: LiDAR export, odometry debugging, KITTI-style sidecars, Pointcept-compatible point clouds, and pipeline checks against brittle learned baselines.",
+      name: "Synthetic LiDAR Point Clouds",
+      tagline: "From simulator to spatial segmentation",
+      desc: "Research engineering for indoor 3D perception: synthetic scene generation, LiDAR and odometry pipelines, and Pointcept-compatible point clouds for downstream segmentation models trained on simulated data",
       stack: ["python", "point clouds", "slam"],
       status: "research",
       proof: "PVL research"
