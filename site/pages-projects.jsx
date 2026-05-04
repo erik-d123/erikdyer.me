@@ -58,7 +58,9 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
         gap: 20,
         maxWidth: 1040,
       }}>
-        {projects.map((p, i) => (
+        {projects.map((p, i) => {
+          const statusAccent = A[window.STATUS_ACCENT[p.status]] || accent;
+          return (
           <article key={p.name} style={{
             background: P.paper, border: `1px solid ${P.rule}`,
             padding: '28px 30px 26px', position: 'relative',
@@ -69,7 +71,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           >
             <div style={{
               fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-              letterSpacing: 1.4, color: accent, marginBottom: 14,
+              letterSpacing: 1.4, color: statusAccent, marginBottom: 14,
             }}>{p.status.toUpperCase()}</div>
             <h2 style={{
               margin: 0, fontFamily: '"Fraunces", serif', fontWeight: 400,
@@ -108,7 +110,8 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
               ))}
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
 
       <div style={{

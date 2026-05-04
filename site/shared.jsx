@@ -38,6 +38,12 @@ window.PAGE_ACCENT = {
   timeline: 'coral',
 };
 
+window.STATUS_ACCENT = {
+  research: 'sage',
+  public:   'periwinkle',
+  course:   'coral',
+};
+
 window.FEATURE_FLAGS = {
   timeline: false,
 };
