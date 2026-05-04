@@ -36,14 +36,19 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
         <div style={{
           fontFamily: '"JetBrains Mono", monospace', fontSize: 10, letterSpacing: 1.6,
           color: P.inkMute, marginBottom: 8,
+          animation: 'inkFade 360ms var(--ease-out-quart) both',
         }}>PORTFOLIO</div>
         <div style={{
           fontFamily: '"Fraunces", Georgia, serif', fontSize: 34, lineHeight: 0.95,
           letterSpacing: -1, color: P.ink, fontWeight: 400,
+          animation: 'inkFade 500ms var(--ease-out-expo) both',
+          animationDelay: '70ms',
         }}>Erik Dyer</div>
         <div style={{
           marginTop: 10, fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
           color: P.inkMute, letterSpacing: 0.4, lineHeight: 1.7,
+          animation: 'inkFade 380ms var(--ease-out-quart) both',
+          animationDelay: '180ms',
         }}>
           princeton · ece<br/>ai systems · infra
         </div>
@@ -71,9 +76,11 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
                 fontFamily: 'Inter, sans-serif', fontSize: tiny ? 14 : 15,
                 color: active ? P.ink : P.inkSoft,
                 letterSpacing: -0.2, display: 'flex', alignItems: 'center', gap: 12,
-                transition: 'color .2s',
+                transition: 'color .2s var(--ease-out-quart)',
                 minHeight: 44,
                 whiteSpace: 'nowrap',
+                animation: 'inkFade 380ms var(--ease-out-quart) both',
+                animationDelay: `${260 + i * 60}ms`,
               }}
               onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = P.ink; }}
               onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = P.inkSoft; }}
@@ -83,7 +90,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
                 background: active ? nAcc : 'transparent',
                 border: `1px solid ${nAcc}`,
                 boxShadow: active ? `0 0 0 4px ${nAcc.replace(')', ' / 0.18)')}` : 'none',
-                transition: 'all .2s',
+                transition: 'background-color .25s var(--ease-out-quart), box-shadow .25s var(--ease-out-quart)',
               }} />
               <span style={{ flex: 1 }}>{n.label}</span>
             </button>
@@ -99,6 +106,8 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           display: 'flex', flexWrap: 'wrap', gap: 14,
           fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
           letterSpacing: 0.4,
+          animation: 'inkFade 420ms var(--ease-out-quart) both',
+          animationDelay: '520ms',
         }}>
           {Object.entries(window.CONTACT_LINKS).map(([k, href]) => (
             <a key={k} href={href}
@@ -106,7 +115,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
               rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
               style={{
                 color: P.inkMute, textDecoration: 'none',
-                transition: 'color .2s',
+                transition: 'color .2s var(--ease-out-quart)',
               }}
               onMouseEnter={(e) => { e.currentTarget.style.color = P.ink; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = P.inkMute; }}
