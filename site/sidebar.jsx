@@ -15,7 +15,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
     { id: 'work',     label: 'work' },
     { id: 'projects', label: 'projects' },
     { id: 'timeline', label: 'timeline' },
-  ];
+  ].filter((n) => n.id !== 'timeline' || window.FEATURE_FLAGS.timeline);
 
   return (
     <aside style={{
@@ -45,7 +45,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           marginTop: 10, fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
           color: P.inkMute, letterSpacing: 0.4, lineHeight: 1.7,
         }}>
-          princeton · ece<br/>ai systems · infra · vision
+          princeton · ece<br/>ai systems · infra
         </div>
       </div>
 

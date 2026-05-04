@@ -38,6 +38,10 @@ window.PAGE_ACCENT = {
   timeline: 'coral',
 };
 
+window.FEATURE_FLAGS = {
+  timeline: false,
+};
+
 window.useTick = function useTick() {
   const [t, setT] = React.useState(0);
   React.useEffect(() => {

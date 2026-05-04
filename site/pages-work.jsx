@@ -14,7 +14,7 @@ window.WorkPage = function WorkPage({ palette }) {
       loc: 'Seattle, WA',
       period: 'May 2026 to Aug 2026',
       tag: 'incoming',
-      desc: 'Incoming on Unity Catalog, the governance, lineage, and access-control layer for data and AI assets at lake scale.',
+      desc: 'Incoming on Unity Catalog, the governance and access-control layer for data and AI at lake scale',
       stack: ['scala', 'spark', 'catalog', 'distributed systems'],
     },
     {
@@ -23,24 +23,24 @@ window.WorkPage = function WorkPage({ palette }) {
       team: 'Identity & Access Management',
       loc: 'Seattle, WA',
       period: 'May 2025 to Aug 2025',
-      desc: 'Worked on AWS IAM, where authorization edge cases happen at internet scale and correctness has to hold under extremely high request volume.',
+      desc: 'Worked on AWS IAM, the identity and policy engine that brokers access for AWS API calls at cloud scale',
       stack: ['java', 'aws', 'authz', 'distributed services'],
     },
     {
       co: 'BlueHalo',
       role: 'Software Engineer Intern',
-      team: 'MLOps, Data Ingestion',
+      team: 'ML Inference Systems',
       loc: 'Remote',
       period: 'May 2024 to Aug 2024',
-      desc: 'Designed and built ETL ingestion pipelines for downstream ML workloads, moving heterogeneous sensor data into a shape models could learn from.',
-      stack: ['python', 'airflow', 'etl', 'sensor data'],
+      desc: 'Built inference infrastructure for production computer vision models, optimizing throughput and latency for real-time deployment',
+      stack: ['python', 'pytorch', 'triton', 'cv'],
     },
   ];
 
   return (
     <window.PageShell palette={P}
       title="work" accent={accent}
-      subtitle={<>Three summers, three <em style={{ color: accent }}>infrastructure</em> teams. ML data, identity, and governance.</>}
+      subtitle={<><em style={{ color: accent }}>Infrastructure</em> for AI systems</>}
     >
       <div style={{ maxWidth: 1040, position: 'relative' }}>
         {!compact && <div style={{
@@ -127,7 +127,7 @@ window.WorkPage = function WorkPage({ palette }) {
           <div style={{
             fontFamily: '"Fraunces", serif', fontSize: 22,
             letterSpacing: -0.4, color: P.ink,
-          }}>Full resume, one page.</div>
+          }}>Resume</div>
         </div>
         <a href="https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=sharing"
           target="_blank" rel="noopener noreferrer" style={{

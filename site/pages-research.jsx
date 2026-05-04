@@ -9,22 +9,22 @@ window.ResearchPage = function ResearchPage({ palette }) {
   const labs = [
     {
       id: 'nlp',
-      name: 'Princeton NLP',
+      name: 'Princeton NLP Lab',
       advisor: 'Karthik R. Narasimhan',
       role: 'Senior Thesis',
       period: '2025 to present',
-      topic: 'Multi-Agent Systems',
-      desc: 'Studying how LLM agents coordinate under long-horizon task pressure. Current work focuses on grounded handoff memory, benchmark design, and evaluation protocols that separate useful coordination from impressive-looking transcripts.',
+      topic: 'Agentic Systems',
+      desc: 'Studying how LLM agents coordinate, and fail, on long-horizon tasks',
       tags: ['llm agents', 'benchmarks', 'memory', 'evaluation'],
     },
     {
       id: 'pvl',
-      name: 'Princeton Vision & Learning',
+      name: 'Princeton Vision & Learning Lab',
       advisor: 'Jia Deng',
       role: 'Undergraduate Researcher',
-      period: '2024 to 2025',
+      period: '2024 to present',
       topic: 'Computer Vision, SLAM & Segmentation',
-      desc: 'Research engineering for 3D scene understanding. Recent work has centered on synthetic indoor LiDAR, odometry pipeline debugging, Pointcept-compatible point clouds, and evaluation contracts for spatial models.',
+      desc: 'Research engineering for 3D scene understanding with sim-to-real data, point clouds, and spatial models',
       tags: ['3d vision', 'lidar', 'slam', 'point clouds'],
     },
   ];
@@ -32,7 +32,7 @@ window.ResearchPage = function ResearchPage({ palette }) {
   return (
     <window.PageShell palette={P}
       title="research" accent={accent}
-      subtitle={<>Two labs, one <em style={{ color: accent }}>through-line.</em> Evaluation has to be as real as the model.</>}
+      subtitle={<><em style={{ color: accent }}>Agentic systems</em> and perception</>}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 0, maxWidth: 1000 }}>
         {labs.map((lab, i) => (
@@ -103,7 +103,7 @@ window.ResearchPage = function ResearchPage({ palette }) {
           margin: 0, fontFamily: '"Fraunces", serif', fontStyle: 'italic',
           fontSize: 22, lineHeight: 1.5, color: P.inkSoft, textWrap: 'pretty',
         }}>
-          Long-horizon agents, long-context reasoning, and spatial perception all fail in ways that look fine until the evaluation gets specific.
+          The failures that matter, in agents or in spatial perception, are usually the ones least seen. Better evaluation is the throughline.
         </blockquote>
       </div>
     </window.PageShell>

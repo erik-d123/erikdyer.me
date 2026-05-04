@@ -8,7 +8,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   const contactLinks = {
     email: 'mailto:erikdyer@princeton.edu',
     github: 'https://github.com/erik-d123',
-    linkedin: 'https://www.linkedin.com/in/erikcdyer/',
+    linkedin: 'https://www.linkedin.com/in/erikcdyer',
   };
 
   const projects = [
@@ -50,7 +50,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   return (
     <window.PageShell palette={P}
       title="projects" accent={accent}
-      subtitle={<>Selected <em style={{ color: accent }}>systems</em>, with honest status labels and concise proof.</>}
+      subtitle={<>Agents, perception, and <em style={{ color: accent }}>ML systems</em></>}
     >
       <div style={{
         display: 'grid',
@@ -124,7 +124,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           <div style={{
             fontFamily: '"Fraunces", serif', fontSize: 32,
             letterSpacing: -0.8, color: P.ink, maxWidth: 620, lineHeight: 1.15,
-          }}>Say hi. I usually write back.</div>
+          }}>Say hi</div>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           {Object.entries(contactLinks).map(([x, href]) => (

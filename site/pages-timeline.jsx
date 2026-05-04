@@ -41,13 +41,7 @@ window.TimelinePage = function TimelinePage({ palette }) {
           lineHeight: 0.95, color: P.ink, fontWeight: 400,
           marginBottom: 22,
         }}>
-          A timeline, of sorts.
-        </div>
-        <div style={{
-          maxWidth: 620, fontSize: 15, lineHeight: 1.7, color: P.inkSoft,
-        }}>
-          A microblog of places I've been and work I've done. Click an event to
-          pin it on the map. The world is mostly a pretext for the photos and the notes.
+          Travel, work, and <em style={{ color: pin }}>everything in-between</em>
         </div>
       </div>
 
@@ -158,6 +152,14 @@ function MapCard({ palette, accent, city, t, event }) {
     const keys = event.path && event.path.length ? event.path : [event.city];
     return keys.map(k => window.CITIES[k]).filter(Boolean);
   }, [event.id]);
+  const eventDots = React.useMemo(() => {
+    const keys = new Set();
+    window.TIMELINE_EVENTS.forEach(e => {
+      const route = e.path && e.path.length ? e.path : [e.city];
+      route.forEach(k => keys.add(k));
+    });
+    return Array.from(keys).map(k => window.CITIES[k]).filter(Boolean);
+  }, []);
 
   // center-and-zoom: compute viewBox centered on city/path with soft easing
   const [zoomed, setZoomed] = React.useState(true);
@@ -191,7 +193,6 @@ function MapCard({ palette, accent, city, t, event }) {
   // when the event changes, re-enter zoomed mode
   React.useEffect(() => { setZoomed(true); }, [event.id]);
 
-  const pinPulse = (Math.sin(t * 2.6) + 1) / 2;
   const zoomScale = vb.w / mapW;
 
   return (
@@ -201,21 +202,6 @@ function MapCard({ palette, accent, city, t, event }) {
       boxShadow: '0 2px 8px rgba(0,0,0,0.03), 0 12px 40px rgba(0,0,0,0.06)',
       paddingTop: `${aspect * 100}%`,
     }}>
-      {/* tack on top */}
-      <div style={{
-        position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)',
-        width: 16, height: 16, borderRadius: '50%',
-        background: accent,
-        boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
-        zIndex: 3,
-      }} />
-      <div style={{
-        position: 'absolute', top: 4, left: '50%',
-        width: 1, height: 30, background: P.inkMute, opacity: 0.4,
-        transformOrigin: 'top', transform: 'translateX(-50%) rotate(-4deg)',
-        zIndex: 2,
-      }} />
-
       <svg viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
         onClick={() => setZoomed(z => !z)}
         style={{
@@ -242,52 +228,45 @@ function MapCard({ palette, accent, city, t, event }) {
           opacity="0.85"
           vectorEffect="non-scaling-stroke"/>
 
-        {/* city dots for all events (faint) */}
-        {Object.entries(window.CITIES).map(([k, c]) => (
-          <circle key={k} cx={c.x} cy={c.y} r={1.6 * zoomScale}
-            fill={P.inkMute} opacity="0.4"/>
+        {/* city dots for timeline events only */}
+        {eventDots.map((c, i) => (
+          <circle key={`${c.label}-${i}`} cx={c.x} cy={c.y} r={0.9 * zoomScale}
+            fill={P.inkMute} opacity="0.2"/>
         ))}
 
-        {/* trajectory line for multi-city trips */}
+        {/* route line for multi-city trips */}
         {pathCities.length > 1 && (
-          <polyline
-            points={pathCities.map(c => `${c.x},${c.y}`).join(' ')}
+          <path
+            d={routePath(pathCities)}
             fill="none"
             stroke={accent}
-            strokeWidth="1.8"
-            strokeDasharray="4 4"
-            opacity="0.85"
+            strokeWidth="1.25"
+            opacity="0.55"
             strokeLinecap="round"
             strokeLinejoin="round"
             vectorEffect="non-scaling-stroke"
           />
         )}
 
-        {/* pins + labels for every city in the path; final stop pulses */}
+        {/* route stops */}
         {pathCities.map((c, i) => {
-          const isLast = i === pathCities.length - 1;
-          const labelW = (c.label.length * 5.2 + 10) * zoomScale;
+          const label = routeLabelOffset(pathCities.length, i);
+          const labelW = (c.label.length * 6.1 + 18) * zoomScale;
+          const markerScale = Math.min(zoomScale, 0.78);
           return (
             <g key={`pin-${i}`}>
-              {isLast && (
-                <>
-                  <circle cx={c.x} cy={c.y} r={(10 + pinPulse * 6) * zoomScale}
-                    fill={accent} opacity={0.18 - pinPulse * 0.1}/>
-                  <circle cx={c.x} cy={c.y} r={(4 + pinPulse * 1.2) * zoomScale}
-                    fill={accent} opacity={0.35}/>
-                </>
-              )}
-              <circle cx={c.x} cy={c.y} r={3 * zoomScale} fill={accent}
-                stroke={P.paper} strokeWidth="1.2"
+              <circle cx={c.x} cy={c.y} r={3.4 * markerScale}
+                fill={P.paper} stroke={accent} strokeWidth="1.25"
                 vectorEffect="non-scaling-stroke"/>
-              <circle cx={c.x} cy={c.y} r={1.2 * zoomScale} fill={P.paper}/>
-              <g transform={`translate(${c.x + 8 * zoomScale}, ${c.y - 4 * zoomScale})`}>
-                <rect x={-2 * zoomScale} y={-10 * zoomScale}
-                  width={labelW} height={14 * zoomScale}
-                  fill={P.paper} opacity="0.9"/>
-                <text x={4 * zoomScale} y={0} fontSize={9 * zoomScale}
+              <circle cx={c.x} cy={c.y} r={1.25 * markerScale} fill={accent}/>
+              <g transform={`translate(${c.x + label.dx * zoomScale}, ${c.y + label.dy * zoomScale})`}>
+                <rect x={-3 * zoomScale} y={-12 * zoomScale}
+                  width={labelW} height={17 * zoomScale}
+                  fill={P.paper} stroke={P.rule} strokeWidth="0.6"
+                  opacity="0.97" vectorEffect="non-scaling-stroke"/>
+                <text x={6 * zoomScale} y={0} fontSize={10.5 * zoomScale}
                   fontFamily='"JetBrains Mono", monospace'
-                  fill={P.ink} letterSpacing={0.3 * zoomScale}>{c.label}</text>
+                  fill={P.ink} letterSpacing={0.25 * zoomScale}>{c.label}</text>
               </g>
             </g>
           );
@@ -327,7 +306,7 @@ function computeViewBox(cities, mapW, mapH) {
 
   // target zoom: single-city ≈ 320×167; multi-city fits bounds + padding
   const bboxW = Math.max(maxX - minX, (maxY - minY) / aspect);
-  const baseW = cities.length > 1 ? bboxW + 140 : 320;
+  const baseW = cities.length > 1 ? Math.max(340, bboxW + 160) : 320;
   let w = Math.max(260, Math.min(mapW, baseW));
   let h = w * aspect;
 
@@ -337,6 +316,25 @@ function computeViewBox(cities, mapW, mapH) {
   x = Math.max(0, Math.min(mapW - w, x));
   y = Math.max(0, Math.min(mapH - h, y));
   return { x, y, w, h };
+}
+
+function routePath(cities) {
+  if (!cities || cities.length < 2) return '';
+  const segments = [`M ${cities[0].x} ${cities[0].y}`];
+
+  for (let i = 1; i < cities.length; i++) {
+    const b = cities[i];
+    segments.push(`L ${b.x} ${b.y}`);
+  }
+
+  return segments.join(' ');
+}
+
+function routeLabelOffset(count, index) {
+  if (count < 2) return { dx: 10, dy: -6 };
+  return index % 2 === 0
+    ? { dx: 10, dy: -10 }
+    : { dx: 10, dy: 20 };
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -375,13 +373,24 @@ function Polaroid({ photo, idx, rotate, palette, accent }) {
       transform: `rotate(${rotate}deg)`,
       position: 'relative',
     }}>
-      {/* tack */}
+      {/* tack, matching the map */}
       <div style={{
-        position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)',
-        width: 12, height: 12, borderRadius: '50%',
-        background: accent,
-        boxShadow: '0 1px 2px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.3)',
-      }}/>
+        position: 'absolute', top: -8, left: '50%',
+        width: 12, height: 22, transform: 'translateX(-50%)',
+        pointerEvents: 'none',
+      }}>
+        <div style={{
+          position: 'absolute', left: '50%', top: 8, width: 1, height: 16,
+          background: 'rgba(70,50,35,0.38)', transform: 'translateX(-50%) rotate(-4deg)',
+          transformOrigin: 'top',
+        }}/>
+        <div style={{
+          position: 'absolute', left: 1, top: 0,
+          width: 10, height: 10, borderRadius: '50%',
+          background: accent,
+          boxShadow: '0 1px 2px rgba(0,0,0,0.13)',
+        }}/>
+      </div>
       {photo.src ? (
         <div style={{
           width: '100%', aspectRatio: '1 / 1',
