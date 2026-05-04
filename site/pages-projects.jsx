@@ -27,8 +27,8 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
     },
     {
       name: 'Synthetic LiDAR Point Clouds',
-      tagline: 'From simulator to spatial segmentation',
-      desc: 'Research engineering for indoor 3D perception: synthetic scene generation, LiDAR and odometry pipelines, and Pointcept-compatible point clouds for downstream segmentation models trained on simulated data',
+      tagline: 'From simulator to spatial perception',
+      desc: 'Research engineering for indoor 3D perception: synthetic scene generation, LiDAR and odometry pipelines, and Pointcept-compatible point clouds for downstream spatial models trained on simulated data',
       stack: ['python', 'point clouds', 'slam'],
       status: 'research',
       proof: 'PVL research',
