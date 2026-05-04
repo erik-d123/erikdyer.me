@@ -129,7 +129,7 @@ window.WorkPage = function WorkPage({ palette }) {
             letterSpacing: -0.4, color: P.ink,
           }}>Resume</div>
         </div>
-        <a href="https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=sharing"
+        <a href="https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=drive_link"
           target="_blank" rel="noopener noreferrer" style={{
           textDecoration: 'none', padding: '12px 22px',
           background: P.ink, color: P.bg, fontFamily: 'Inter, sans-serif',
