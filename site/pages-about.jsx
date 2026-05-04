@@ -79,13 +79,13 @@ window.AboutPage = function AboutPage({ palette }) {
             ['industry', 'Databricks · Amazon · BlueHalo'],
           ].map(([k, v], i) => (
             <div key={k} style={{
-              display: 'grid', gridTemplateColumns: '92px minmax(0, 1fr)', gap: 16,
+              display: 'grid', gridTemplateColumns: '72px minmax(0, 1fr)', gap: 16,
               alignItems: 'baseline',
               padding: '9px 0', borderTop: i === 0 ? 'none' : `1px dashed ${P.rule}`,
               fontFamily: '"JetBrains Mono", monospace', fontSize: 12,
             }}>
               <span style={{ color: P.inkMute, letterSpacing: 0.3 }}>{k}</span>
-              <span style={{ color: P.ink, textAlign: 'right', overflowWrap: 'anywhere' }}>{v}</span>
+              <span style={{ color: P.ink, textAlign: 'right' }}>{v}</span>
             </div>
           ))}
         </aside>
