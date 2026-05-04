@@ -64,6 +64,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           const nAcc = pageAccent(n.id);
           return (
             <button key={n.id} onClick={() => setPage(n.id)}
+              aria-current={active ? 'page' : undefined}
               style={{
                 textAlign: 'left', background: 'transparent', border: 'none',
                 padding: tiny ? '8px 6px' : compact ? '8px 10px' : '8px 2px', cursor: 'pointer',
