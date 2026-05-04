@@ -44,6 +44,12 @@ window.STATUS_ACCENT = {
   course:   'coral',
 };
 
+window.CONTACT_LINKS = {
+  email:    'mailto:erikdyer@princeton.edu',
+  github:   'https://github.com/erik-d123',
+  linkedin: 'https://www.linkedin.com/in/erikcdyer',
+};
+
 window.FEATURE_FLAGS = {
   timeline: false,
 };

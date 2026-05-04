@@ -5,11 +5,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   const accent = A[window.PAGE_ACCENT.projects];
   const { width } = window.useViewport();
   const compact = width < 900;
-  const contactLinks = {
-    email: 'mailto:erikdyer@princeton.edu',
-    github: 'https://github.com/erik-d123',
-    linkedin: 'https://www.linkedin.com/in/erikcdyer',
-  };
+  const contactLinks = window.CONTACT_LINKS;
 
   const projects = [
     {
