@@ -3,7 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Erik Dyer</title>
+<title>Erik Dyer — Princeton ECE</title>
+<meta name="description" content="Princeton ECE junior. Research and engineering on agentic systems, ML infrastructure, and 3D perception.">
+<link rel="canonical" href="https://erikdyer.me/">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='8' fill='%23E07B5B'/></svg>">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://erikdyer.me/">
+<meta property="og:title" content="Erik Dyer — Princeton ECE">
+<meta property="og:description" content="Princeton ECE junior. Research and engineering on agentic systems, ML infrastructure, and 3D perception.">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Erik Dyer — Princeton ECE">
+<meta name="twitter:description" content="Princeton ECE junior. Research and engineering on agentic systems, ML infrastructure, and 3D perception.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -12,6 +25,11 @@
   * { box-sizing: border-box; }
   body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   ::selection { background: oklch(0.58 0.14 265 / 0.25); }
+
+  button:focus-visible, a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
 
   @keyframes inkFade {
     from { opacity: 0; transform: translateY(6px); }
@@ -46,20 +64,24 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<script type="text/babel" src="site/shared.jsx"></script>
-<script type="text/babel" src="site/sidebar.jsx"></script>
-<script type="text/babel" src="site/pages-about.jsx"></script>
-<script type="text/babel" src="site/pages-research.jsx"></script>
-<script type="text/babel" src="site/pages-work.jsx"></script>
-<script type="text/babel" src="site/pages-projects.jsx"></script>
-<script type="text/babel" src="site/timeline-data.jsx"></script>
-<script type="text/babel" src="site/pages-timeline.jsx"></script>
+<script type="text/babel" src="site/shared.jsx?v=20260504b"></script>
+<script type="text/babel" src="site/sidebar.jsx?v=20260504b"></script>
+<script type="text/babel" src="site/pages-about.jsx?v=20260504b"></script>
+<script type="text/babel" src="site/pages-research.jsx?v=20260504b"></script>
+<script type="text/babel" src="site/pages-work.jsx?v=20260504b"></script>
+<script type="text/babel" src="site/pages-projects.jsx?v=20260504b"></script>
+<script type="text/babel" src="site/timeline-data.jsx?v=20260504b"></script>
+<script type="text/babel" src="site/pages-timeline.jsx?v=20260504b"></script>
 
 <script type="text/babel" data-presets="react">
 const DEFAULTS = { palette: 'cream', accent: 'coral' };
 
 function App() {
-  const [page, setPage]             = React.useState(() => localStorage.getItem('ed_page')    || 'about');
+  const normalizePage = (id) => (
+    id === 'timeline' && !window.FEATURE_FLAGS.timeline ? 'about' : id
+  );
+  const [page, setRawPage]          = React.useState(() => normalizePage(localStorage.getItem('ed_page') || 'about'));
+  const setPage = (id) => setRawPage(normalizePage(id));
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem('ed_palette') || DEFAULTS.palette);
   const [accentKey, setAccentKey]   = React.useState(() => localStorage.getItem('ed_accent')  || DEFAULTS.accent);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
@@ -69,7 +91,7 @@ function App() {
   React.useEffect(() => { localStorage.setItem('ed_accent',  accentKey); },  [accentKey]);
   const palette = window.PALETTES[paletteKey] || window.PALETTES.cream;
   const viewport = window.useViewport();
-  const compact = viewport.width < 900;
+  const compact = viewport.width < 1100;
 
   const PageComp = {
     about:    window.AboutPage,

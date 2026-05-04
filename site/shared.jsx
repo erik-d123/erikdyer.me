@@ -38,6 +38,22 @@ window.PAGE_ACCENT = {
   timeline: 'coral',
 };
 
+window.STATUS_ACCENT = {
+  research: 'sage',
+  public:   'periwinkle',
+  course:   'coral',
+};
+
+window.CONTACT_LINKS = {
+  email:    'mailto:erikdyer@princeton.edu',
+  github:   'https://github.com/erik-d123',
+  linkedin: 'https://www.linkedin.com/in/erikcdyer',
+};
+
+window.FEATURE_FLAGS = {
+  timeline: false,
+};
+
 window.useTick = function useTick() {
   const [t, setT] = React.useState(0);
   React.useEffect(() => {

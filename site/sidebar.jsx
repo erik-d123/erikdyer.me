@@ -15,7 +15,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
     { id: 'work',     label: 'work' },
     { id: 'projects', label: 'projects' },
     { id: 'timeline', label: 'timeline' },
-  ];
+  ].filter((n) => n.id !== 'timeline' || window.FEATURE_FLAGS.timeline);
 
   return (
     <aside style={{
@@ -45,7 +45,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           marginTop: 10, fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
           color: P.inkMute, letterSpacing: 0.4, lineHeight: 1.7,
         }}>
-          princeton · ece<br/>ai systems · infra · vision
+          princeton · ece<br/>ai systems · infra
         </div>
       </div>
 
@@ -64,6 +64,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           const nAcc = pageAccent(n.id);
           return (
             <button key={n.id} onClick={() => setPage(n.id)}
+              aria-current={active ? 'page' : undefined}
               style={{
                 textAlign: 'left', background: 'transparent', border: 'none',
                 padding: tiny ? '8px 6px' : compact ? '8px 10px' : '8px 2px', cursor: 'pointer',
@@ -89,6 +90,30 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           );
         })}
       </nav>
+
+      {(!compact || narrow) && (
+        <div style={{
+          marginTop: compact ? 4 : 'auto',
+          paddingTop: 16,
+          borderTop: `1px dashed ${P.rule}`,
+          display: 'flex', flexWrap: 'wrap', gap: 14,
+          fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
+          letterSpacing: 0.4,
+        }}>
+          {Object.entries(window.CONTACT_LINKS).map(([k, href]) => (
+            <a key={k} href={href}
+              target={href.startsWith('http') ? '_blank' : undefined}
+              rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              style={{
+                color: P.inkMute, textDecoration: 'none',
+                transition: 'color .2s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = P.ink; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = P.inkMute; }}
+            >{k}</a>
+          ))}
+        </div>
+      )}
     </aside>
   );
 };

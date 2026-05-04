@@ -5,11 +5,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   const accent = A[window.PAGE_ACCENT.projects];
   const { width } = window.useViewport();
   const compact = width < 900;
-  const contactLinks = {
-    email: 'mailto:erikdyer@princeton.edu',
-    github: 'https://github.com/erik-d123',
-    linkedin: 'https://www.linkedin.com/in/erikcdyer/',
-  };
+  const contactLinks = window.CONTACT_LINKS;
 
   const projects = [
     {
@@ -50,7 +46,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   return (
     <window.PageShell palette={P}
       title="projects" accent={accent}
-      subtitle={<>Selected <em style={{ color: accent }}>systems</em>, with honest status labels and concise proof.</>}
+      subtitle={<>Agents, perception, and <em style={{ color: accent }}>ML systems</em></>}
     >
       <div style={{
         display: 'grid',
@@ -58,7 +54,9 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
         gap: 20,
         maxWidth: 1040,
       }}>
-        {projects.map((p, i) => (
+        {projects.map((p, i) => {
+          const statusAccent = A[window.STATUS_ACCENT[p.status]] || accent;
+          return (
           <article key={p.name} style={{
             background: P.paper, border: `1px solid ${P.rule}`,
             padding: '28px 30px 26px', position: 'relative',
@@ -69,7 +67,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           >
             <div style={{
               fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-              letterSpacing: 1.4, color: accent, marginBottom: 14,
+              letterSpacing: 1.4, color: statusAccent, marginBottom: 14,
             }}>{p.status.toUpperCase()}</div>
             <h2 style={{
               margin: 0, fontFamily: '"Fraunces", serif', fontWeight: 400,
@@ -108,7 +106,8 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
               ))}
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
 
       <div style={{
@@ -124,7 +123,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           <div style={{
             fontFamily: '"Fraunces", serif', fontSize: 32,
             letterSpacing: -0.8, color: P.ink, maxWidth: 620, lineHeight: 1.15,
-          }}>Say hi. I usually write back.</div>
+          }}>Say hi</div>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           {Object.entries(contactLinks).map(([x, href]) => (
