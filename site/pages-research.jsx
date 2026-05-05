@@ -41,6 +41,8 @@ window.ResearchPage = function ResearchPage({ palette }) {
             gridTemplateColumns: compact ? '1fr' : '160px 1fr',
             gap: compact ? 18 : 48,
             padding: '36px 0', borderTop: i === 0 ? 'none' : `1px solid ${P.rule}`,
+            animation: 'inkFade 460ms var(--ease-out-quart) both',
+            animationDelay: `${320 + i * 90}ms`,
           }}>
             <div style={{ position: 'relative', paddingTop: 4 }}>
               <div style={{

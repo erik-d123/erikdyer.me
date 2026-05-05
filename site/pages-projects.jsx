@@ -60,10 +60,18 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           <article key={p.name} style={{
             background: P.paper, border: `1px solid ${P.rule}`,
             padding: '28px 30px 26px', position: 'relative',
-            transition: 'all .2s',
+            transition: 'border-color .2s var(--ease-out-quart), transform .25s var(--ease-out-quart)',
+            animation: 'inkFade 460ms var(--ease-out-quart) both',
+            animationDelay: `${320 + i * 70}ms`,
           }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = accent; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = P.rule; }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = accent;
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = P.rule;
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
           >
             <div style={{
               fontFamily: '"JetBrains Mono", monospace', fontSize: 10,

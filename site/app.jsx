@@ -7,7 +7,22 @@ function App() {
     id === 'timeline' && !window.FEATURE_FLAGS.timeline ? 'about' : id
   );
   const [page, setRawPage]          = React.useState(() => normalizePage(localStorage.getItem('ed_page') || 'about'));
-  const setPage = (id) => setRawPage(normalizePage(id));
+  const setPage = (id) => {
+    const next = normalizePage(id);
+    if (next === page) return;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce && document.startViewTransition) {
+      document.startViewTransition(() => {
+        if (window.ReactDOM && window.ReactDOM.flushSync) {
+          window.ReactDOM.flushSync(() => setRawPage(next));
+        } else {
+          setRawPage(next);
+        }
+      });
+    } else {
+      setRawPage(next);
+    }
+  };
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem('ed_palette') || DEFAULTS.palette);
   const [accentKey, setAccentKey]   = React.useState(() => localStorage.getItem('ed_accent')  || DEFAULTS.accent);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
@@ -72,7 +87,7 @@ function TweaksToggle({ open, onToggle, palette }) {
         alignItems: 'center', justifyContent: 'center',
         fontFamily: '"JetBrains Mono", monospace', fontSize: 14,
         color: P.ink, letterSpacing: 0.5,
-        transition: 'transform .2s',
+        transition: 'transform .25s var(--ease-out-quart), border-color .2s var(--ease-out-quart)',
         transform: open ? 'rotate(45deg)' : 'rotate(0deg)',
       }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = P.ink; }}
@@ -90,7 +105,7 @@ function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
       position: 'fixed', bottom: 76, right: 20, width: 280,
       background: P.paper, border: `1px solid ${P.rule}`,
       boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
-      padding: '16px 18px', zIndex: 100, animation: 'slideInR 300ms ease-out',
+      padding: '16px 18px', zIndex: 100, animation: 'slideInR 320ms var(--ease-out-quart) both',
       fontFamily: 'Inter, sans-serif',
     }}>
       <div style={{

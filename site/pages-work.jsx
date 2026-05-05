@@ -53,6 +53,8 @@ window.WorkPage = function WorkPage({ palette }) {
             gridTemplateColumns: compact ? '1fr' : '160px 40px 1fr',
             gap: compact ? 14 : 0,
             padding: '36px 0', borderBottom: i === jobs.length - 1 ? 'none' : `1px dashed ${P.rule}`,
+            animation: 'inkFade 460ms var(--ease-out-quart) both',
+            animationDelay: `${320 + i * 90}ms`,
           }}>
             <div>
               <div style={{

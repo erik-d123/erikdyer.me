@@ -111,21 +111,26 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
     fontSize: 10,
     letterSpacing: 1.6,
     color: P.inkMute,
-    marginBottom: 8
+    marginBottom: 8,
+    animation: "inkFade 360ms var(--ease-out-quart) both"
   } }, "PORTFOLIO"), /* @__PURE__ */ React.createElement("div", { style: {
     fontFamily: '"Fraunces", Georgia, serif',
     fontSize: 34,
     lineHeight: 0.95,
     letterSpacing: -1,
     color: P.ink,
-    fontWeight: 400
+    fontWeight: 400,
+    animation: "inkFade 500ms var(--ease-out-expo) both",
+    animationDelay: "70ms"
   } }, "Erik Dyer"), /* @__PURE__ */ React.createElement("div", { style: {
     marginTop: 10,
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 10,
     color: P.inkMute,
     letterSpacing: 0.4,
-    lineHeight: 1.7
+    lineHeight: 1.7,
+    animation: "inkFade 380ms var(--ease-out-quart) both",
+    animationDelay: "180ms"
   } }, "princeton \xB7 ece", /* @__PURE__ */ React.createElement("br", null), "ai systems \xB7 infra")), /* @__PURE__ */ React.createElement("nav", { style: {
     borderTop: compact ? "none" : `1px solid ${P.rule}`,
     paddingTop: compact ? 0 : 16,
@@ -158,9 +163,11 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           display: "flex",
           alignItems: "center",
           gap: 12,
-          transition: "color .2s",
+          transition: "color .2s var(--ease-out-quart)",
           minHeight: 44,
-          whiteSpace: "nowrap"
+          whiteSpace: "nowrap",
+          animation: "inkFade 380ms var(--ease-out-quart) both",
+          animationDelay: `${260 + i * 60}ms`
         },
         onMouseEnter: (e) => {
           if (!active) e.currentTarget.style.color = P.ink;
@@ -177,7 +184,8 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
         background: active ? nAcc : "transparent",
         border: `1px solid ${nAcc}`,
         boxShadow: active ? `0 0 0 4px ${nAcc.replace(")", " / 0.18)")}` : "none",
-        transition: "all .2s"
+        transition: "background-color .25s var(--ease-out-quart), box-shadow .25s var(--ease-out-quart)",
+        viewTransitionName: active ? "nav-active-dot" : void 0
       } }),
       /* @__PURE__ */ React.createElement("span", { style: { flex: 1 } }, n.label)
     );
@@ -190,7 +198,9 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
     gap: 14,
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 11,
-    letterSpacing: 0.4
+    letterSpacing: 0.4,
+    animation: "inkFade 420ms var(--ease-out-quart) both",
+    animationDelay: "520ms"
   } }, Object.entries(window.CONTACT_LINKS).map(([k, href]) => /* @__PURE__ */ React.createElement(
     "a",
     {
@@ -201,7 +211,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
       style: {
         color: P.inkMute,
         textDecoration: "none",
-        transition: "color .2s"
+        transition: "color .2s var(--ease-out-quart)"
       },
       onMouseEnter: (e) => {
         e.currentTarget.style.color = P.ink;
@@ -220,7 +230,7 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
   const { width } = window.useViewport();
   const compact = width < 1100;
   const narrow = width < 640;
-  return /* @__PURE__ */ React.createElement("div", { key: title, style: { animation: "pageIn 500ms ease-out both" } }, /* @__PURE__ */ React.createElement("div", { style: {
+  return /* @__PURE__ */ React.createElement("div", { key: title }, /* @__PURE__ */ React.createElement("div", { style: {
     padding: compact ? "34px 24px 24px" : "60px 72px 32px",
     borderBottom: `1px solid ${P.rule}`,
     display: "grid",
@@ -233,7 +243,18 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
     letterSpacing: 2,
     color: P.inkMute,
     marginBottom: 14
-  } }, /* @__PURE__ */ React.createElement("span", { style: { color: accent } }, "\u25CF"), /* @__PURE__ */ React.createElement("span", { style: { marginLeft: 10 } }, title.toUpperCase())), /* @__PURE__ */ React.createElement("h1", { style: {
+  } }, /* @__PURE__ */ React.createElement("span", { style: {
+    color: accent,
+    display: "inline-block",
+    animation: "dotPop 320ms var(--ease-out-quart) both",
+    viewTransitionName: "section-dot"
+  } }, "\u25CF"), /* @__PURE__ */ React.createElement("span", { style: {
+    marginLeft: 10,
+    display: "inline-block",
+    animation: "inkFade 360ms var(--ease-out-quart) both",
+    animationDelay: "60ms",
+    viewTransitionName: "section-label"
+  } }, title.toUpperCase())), /* @__PURE__ */ React.createElement("h1", { style: {
     margin: 0,
     fontFamily: '"Fraunces", Georgia, serif',
     fontWeight: 400,
@@ -241,8 +262,15 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
     lineHeight: 1,
     letterSpacing: -1.2,
     color: P.ink,
-    textWrap: "pretty"
-  } }, subtitle))), /* @__PURE__ */ React.createElement("div", { style: { padding: compact ? "30px 24px 72px" : "48px 72px 96px" } }, children));
+    textWrap: "pretty",
+    animation: "inkFade 600ms var(--ease-out-expo) both",
+    animationDelay: "140ms",
+    viewTransitionName: "hero-title"
+  } }, subtitle))), /* @__PURE__ */ React.createElement("div", { style: {
+    padding: compact ? "30px 24px 72px" : "48px 72px 96px",
+    animation: "inkFade 500ms var(--ease-out-quart) both",
+    animationDelay: "280ms"
+  } }, children));
 };
 window.AboutPage = function AboutPage({ palette }) {
   const P = palette, A = window.ACCENTS;
@@ -295,7 +323,9 @@ window.AboutPage = function AboutPage({ palette }) {
       padding: "9px 0",
       borderTop: i === 0 ? "none" : `1px dashed ${P.rule}`,
       fontFamily: '"JetBrains Mono", monospace',
-      fontSize: 12
+      fontSize: 12,
+      animation: "inkFade 420ms var(--ease-out-quart) both",
+      animationDelay: `${380 + i * 55}ms`
     } }, /* @__PURE__ */ React.createElement("span", { style: { color: P.inkMute, letterSpacing: 0.3 } }, k), /* @__PURE__ */ React.createElement("span", { style: { color: P.ink, textAlign: "right" } }, v)))))
   );
 };
@@ -341,7 +371,9 @@ window.ResearchPage = function ResearchPage({ palette }) {
       gridTemplateColumns: compact ? "1fr" : "160px 1fr",
       gap: compact ? 18 : 48,
       padding: "36px 0",
-      borderTop: i === 0 ? "none" : `1px solid ${P.rule}`
+      borderTop: i === 0 ? "none" : `1px solid ${P.rule}`,
+      animation: "inkFade 460ms var(--ease-out-quart) both",
+      animationDelay: `${320 + i * 90}ms`
     } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", paddingTop: 4 } }, /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 11,
@@ -469,7 +501,9 @@ window.WorkPage = function WorkPage({ palette }) {
       gridTemplateColumns: compact ? "1fr" : "160px 40px 1fr",
       gap: compact ? 14 : 0,
       padding: "36px 0",
-      borderBottom: i === jobs.length - 1 ? "none" : `1px dashed ${P.rule}`
+      borderBottom: i === jobs.length - 1 ? "none" : `1px dashed ${P.rule}`,
+      animation: "inkFade 460ms var(--ease-out-quart) both",
+      animationDelay: `${320 + i * 90}ms`
     } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 11,
@@ -647,13 +681,17 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
             border: `1px solid ${P.rule}`,
             padding: "28px 30px 26px",
             position: "relative",
-            transition: "all .2s"
+            transition: "border-color .2s var(--ease-out-quart), transform .25s var(--ease-out-quart)",
+            animation: "inkFade 460ms var(--ease-out-quart) both",
+            animationDelay: `${320 + i * 70}ms`
           },
           onMouseEnter: (e) => {
             e.currentTarget.style.borderColor = accent;
+            e.currentTarget.style.transform = "translateY(-2px)";
           },
           onMouseLeave: (e) => {
             e.currentTarget.style.borderColor = P.rule;
+            e.currentTarget.style.transform = "translateY(0)";
           }
         },
         /* @__PURE__ */ React.createElement("div", { style: {
@@ -1442,7 +1480,22 @@ const DEFAULTS = { palette: "cream", accent: "coral" };
 function App() {
   const normalizePage = (id) => id === "timeline" && !window.FEATURE_FLAGS.timeline ? "about" : id;
   const [page, setRawPage] = React.useState(() => normalizePage(localStorage.getItem("ed_page") || "about"));
-  const setPage = (id) => setRawPage(normalizePage(id));
+  const setPage = (id) => {
+    const next = normalizePage(id);
+    if (next === page) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && document.startViewTransition) {
+      document.startViewTransition(() => {
+        if (window.ReactDOM && window.ReactDOM.flushSync) {
+          window.ReactDOM.flushSync(() => setRawPage(next));
+        } else {
+          setRawPage(next);
+        }
+      });
+    } else {
+      setRawPage(next);
+    }
+  };
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem("ed_palette") || DEFAULTS.palette);
   const [accentKey, setAccentKey] = React.useState(() => localStorage.getItem("ed_accent") || DEFAULTS.accent);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
@@ -1525,7 +1578,7 @@ function TweaksToggle({ open, onToggle, palette }) {
         fontSize: 14,
         color: P.ink,
         letterSpacing: 0.5,
-        transition: "transform .2s",
+        transition: "transform .25s var(--ease-out-quart), border-color .2s var(--ease-out-quart)",
         transform: open ? "rotate(45deg)" : "rotate(0deg)"
       },
       onMouseEnter: (e) => {
@@ -1550,7 +1603,7 @@ function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
     boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
     padding: "16px 18px",
     zIndex: 100,
-    animation: "slideInR 300ms ease-out",
+    animation: "slideInR 320ms var(--ease-out-quart) both",
     fontFamily: "Inter, sans-serif"
   } }, /* @__PURE__ */ React.createElement("div", { style: {
     fontFamily: '"JetBrains Mono", monospace',

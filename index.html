@@ -21,6 +21,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   html, body { margin: 0; padding: 0; }
   * { box-sizing: border-box; }
   body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -43,6 +48,29 @@
     from { opacity: 0; transform: translateX(12px); }
     to   { opacity: 1; transform: translateX(0); }
   }
+  @keyframes dotPop {
+    from { opacity: 0; transform: scale(0.4); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 320ms;
+    animation-timing-function: var(--ease-out-quart);
+  }
+  ::view-transition-old(hero-title),
+  ::view-transition-new(hero-title),
+  ::view-transition-old(section-dot),
+  ::view-transition-new(section-dot),
+  ::view-transition-old(section-label),
+  ::view-transition-new(section-label),
+  ::view-transition-old(nav-active-dot),
+  ::view-transition-new(nav-active-dot) {
+    animation-duration: 460ms;
+    animation-timing-function: var(--ease-out-expo);
+    mix-blend-mode: normal;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 1ms !important;

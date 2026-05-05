@@ -6,7 +6,7 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
   const compact = width < 1100;
   const narrow = width < 640;
   return (
-    <div key={title} style={{ animation: 'pageIn 500ms ease-out both' }}>
+    <div key={title}>
       <div style={{
         padding: compact ? '34px 24px 24px' : '60px 72px 32px',
         borderBottom: `1px solid ${P.rule}`,
@@ -20,18 +20,34 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
             fontFamily: '"JetBrains Mono", monospace', fontSize: 11, letterSpacing: 2,
             color: P.inkMute, marginBottom: 14,
           }}>
-            <span style={{ color: accent }}>●</span>
-            <span style={{ marginLeft: 10 }}>{title.toUpperCase()}</span>
+            <span style={{
+              color: accent, display: 'inline-block',
+              animation: 'dotPop 320ms var(--ease-out-quart) both',
+              viewTransitionName: 'section-dot',
+            }}>●</span>
+            <span style={{
+              marginLeft: 10, display: 'inline-block',
+              animation: 'inkFade 360ms var(--ease-out-quart) both',
+              animationDelay: '60ms',
+              viewTransitionName: 'section-label',
+            }}>{title.toUpperCase()}</span>
           </div>
           <h1 style={{
             margin: 0, fontFamily: '"Fraunces", Georgia, serif', fontWeight: 400,
             fontSize: narrow ? 40 : compact ? 'clamp(44px, 8vw, 60px)' : 'clamp(52px, 6vw, 76px)',
             lineHeight: 1, letterSpacing: -1.2, color: P.ink,
             textWrap: 'pretty',
+            animation: 'inkFade 600ms var(--ease-out-expo) both',
+            animationDelay: '140ms',
+            viewTransitionName: 'hero-title',
           }}>{subtitle}</h1>
         </div>
       </div>
-      <div style={{ padding: compact ? '30px 24px 72px' : '48px 72px 96px' }}>{children}</div>
+      <div style={{
+        padding: compact ? '30px 24px 72px' : '48px 72px 96px',
+        animation: 'inkFade 500ms var(--ease-out-quart) both',
+        animationDelay: '280ms',
+      }}>{children}</div>
     </div>
   );
 };
@@ -83,6 +99,8 @@ window.AboutPage = function AboutPage({ palette }) {
               alignItems: 'baseline',
               padding: '9px 0', borderTop: i === 0 ? 'none' : `1px dashed ${P.rule}`,
               fontFamily: '"JetBrains Mono", monospace', fontSize: 12,
+              animation: 'inkFade 420ms var(--ease-out-quart) both',
+              animationDelay: `${380 + i * 55}ms`,
             }}>
               <span style={{ color: P.inkMute, letterSpacing: 0.3 }}>{k}</span>
               <span style={{ color: P.ink, textAlign: 'right' }}>{v}</span>
