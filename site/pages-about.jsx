@@ -23,11 +23,13 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
             <span style={{
               color: accent, display: 'inline-block',
               animation: 'dotPop 320ms var(--ease-out-quart) both',
+              viewTransitionName: 'section-dot',
             }}>●</span>
             <span style={{
               marginLeft: 10, display: 'inline-block',
               animation: 'inkFade 360ms var(--ease-out-quart) both',
               animationDelay: '60ms',
+              viewTransitionName: 'section-label',
             }}>{title.toUpperCase()}</span>
           </div>
           <h1 style={{
@@ -37,6 +39,7 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
             textWrap: 'pretty',
             animation: 'inkFade 600ms var(--ease-out-expo) both',
             animationDelay: '140ms',
+            viewTransitionName: 'hero-title',
           }}>{subtitle}</h1>
         </div>
       </div>

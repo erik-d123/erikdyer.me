@@ -52,6 +52,25 @@
     from { opacity: 0; transform: scale(0.4); }
     to   { opacity: 1; transform: scale(1); }
   }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 320ms;
+    animation-timing-function: var(--ease-out-quart);
+  }
+  ::view-transition-old(hero-title),
+  ::view-transition-new(hero-title),
+  ::view-transition-old(section-dot),
+  ::view-transition-new(section-dot),
+  ::view-transition-old(section-label),
+  ::view-transition-new(section-label),
+  ::view-transition-old(nav-active-dot),
+  ::view-transition-new(nav-active-dot) {
+    animation-duration: 460ms;
+    animation-timing-function: var(--ease-out-expo);
+    mix-blend-mode: normal;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 1ms !important;

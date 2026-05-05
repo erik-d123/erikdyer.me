@@ -91,6 +91,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
                 border: `1px solid ${nAcc}`,
                 boxShadow: active ? `0 0 0 4px ${nAcc.replace(')', ' / 0.18)')}` : 'none',
                 transition: 'background-color .25s var(--ease-out-quart), box-shadow .25s var(--ease-out-quart)',
+                viewTransitionName: active ? 'nav-active-dot' : undefined,
               }} />
               <span style={{ flex: 1 }}>{n.label}</span>
             </button>

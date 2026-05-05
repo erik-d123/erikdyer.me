@@ -184,7 +184,8 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
         background: active ? nAcc : "transparent",
         border: `1px solid ${nAcc}`,
         boxShadow: active ? `0 0 0 4px ${nAcc.replace(")", " / 0.18)")}` : "none",
-        transition: "background-color .25s var(--ease-out-quart), box-shadow .25s var(--ease-out-quart)"
+        transition: "background-color .25s var(--ease-out-quart), box-shadow .25s var(--ease-out-quart)",
+        viewTransitionName: active ? "nav-active-dot" : void 0
       } }),
       /* @__PURE__ */ React.createElement("span", { style: { flex: 1 } }, n.label)
     );
@@ -245,12 +246,14 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
   } }, /* @__PURE__ */ React.createElement("span", { style: {
     color: accent,
     display: "inline-block",
-    animation: "dotPop 320ms var(--ease-out-quart) both"
+    animation: "dotPop 320ms var(--ease-out-quart) both",
+    viewTransitionName: "section-dot"
   } }, "\u25CF"), /* @__PURE__ */ React.createElement("span", { style: {
     marginLeft: 10,
     display: "inline-block",
     animation: "inkFade 360ms var(--ease-out-quart) both",
-    animationDelay: "60ms"
+    animationDelay: "60ms",
+    viewTransitionName: "section-label"
   } }, title.toUpperCase())), /* @__PURE__ */ React.createElement("h1", { style: {
     margin: 0,
     fontFamily: '"Fraunces", Georgia, serif',
@@ -261,7 +264,8 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
     color: P.ink,
     textWrap: "pretty",
     animation: "inkFade 600ms var(--ease-out-expo) both",
-    animationDelay: "140ms"
+    animationDelay: "140ms",
+    viewTransitionName: "hero-title"
   } }, subtitle))), /* @__PURE__ */ React.createElement("div", { style: {
     padding: compact ? "30px 24px 72px" : "48px 72px 96px",
     animation: "inkFade 500ms var(--ease-out-quart) both",
@@ -1476,7 +1480,22 @@ const DEFAULTS = { palette: "cream", accent: "coral" };
 function App() {
   const normalizePage = (id) => id === "timeline" && !window.FEATURE_FLAGS.timeline ? "about" : id;
   const [page, setRawPage] = React.useState(() => normalizePage(localStorage.getItem("ed_page") || "about"));
-  const setPage = (id) => setRawPage(normalizePage(id));
+  const setPage = (id) => {
+    const next = normalizePage(id);
+    if (next === page) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && document.startViewTransition) {
+      document.startViewTransition(() => {
+        if (window.ReactDOM && window.ReactDOM.flushSync) {
+          window.ReactDOM.flushSync(() => setRawPage(next));
+        } else {
+          setRawPage(next);
+        }
+      });
+    } else {
+      setRawPage(next);
+    }
+  };
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem("ed_palette") || DEFAULTS.palette);
   const [accentKey, setAccentKey] = React.useState(() => localStorage.getItem("ed_accent") || DEFAULTS.accent);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);

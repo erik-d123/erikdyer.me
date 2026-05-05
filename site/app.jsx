@@ -7,7 +7,22 @@ function App() {
     id === 'timeline' && !window.FEATURE_FLAGS.timeline ? 'about' : id
   );
   const [page, setRawPage]          = React.useState(() => normalizePage(localStorage.getItem('ed_page') || 'about'));
-  const setPage = (id) => setRawPage(normalizePage(id));
+  const setPage = (id) => {
+    const next = normalizePage(id);
+    if (next === page) return;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce && document.startViewTransition) {
+      document.startViewTransition(() => {
+        if (window.ReactDOM && window.ReactDOM.flushSync) {
+          window.ReactDOM.flushSync(() => setRawPage(next));
+        } else {
+          setRawPage(next);
+        }
+      });
+    } else {
+      setRawPage(next);
+    }
+  };
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem('ed_palette') || DEFAULTS.palette);
   const [accentKey, setAccentKey]   = React.useState(() => localStorage.getItem('ed_accent')  || DEFAULTS.accent);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
