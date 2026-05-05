@@ -13,6 +13,7 @@ import { join } from 'node:path';
 const ORDER = [
   'shared.jsx',
   'sidebar.jsx',
+  'paper-bloom.jsx',
   'pages-about.jsx',
   'pages-research.jsx',
   'pages-work.jsx',

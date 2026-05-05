@@ -1,6 +1,6 @@
 // pages-about.jsx
 
-window.PageShell = function PageShell({ palette, title, subtitle, accent, children }) {
+window.PageShell = function PageShell({ palette, title, subtitle, accent, children, backdrop = null }) {
   const P = palette;
   const { width } = window.useViewport();
   const compact = width < 1100;
@@ -14,8 +14,12 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
         gridTemplateColumns: '1fr',
         gap: compact ? 20 : 40,
         alignItems: 'end',
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: backdrop ? (compact ? 220 : 300) : undefined,
       }}>
-        <div>
+        {backdrop}
+        <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{
             fontFamily: '"JetBrains Mono", monospace', fontSize: 11, letterSpacing: 2,
             color: P.inkMute, marginBottom: 14,
@@ -62,6 +66,7 @@ window.AboutPage = function AboutPage({ palette }) {
     <window.PageShell palette={P}
       title="about" accent={accent}
       subtitle={<><em style={{ color: accent }}>Electrical & Computer Engineering</em> at Princeton</>}
+      backdrop={<window.PaperBloom accent={accent} opacity={0.24} />}
     >
       <div style={{
         display: 'grid',
