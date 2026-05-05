@@ -1,6 +1,6 @@
 // pages-about.jsx
 
-window.PageShell = function PageShell({ palette, title, subtitle, accent, children, backdrop = null }) {
+window.PageShell = function PageShell({ palette, title, subtitle, accent, children }) {
   const P = palette;
   const { width } = window.useViewport();
   const compact = width < 1100;
@@ -14,12 +14,8 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
         gridTemplateColumns: '1fr',
         gap: compact ? 20 : 40,
         alignItems: 'end',
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: backdrop ? (compact ? 220 : 300) : undefined,
       }}>
-        {backdrop}
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        <div>
           <div style={{
             fontFamily: '"JetBrains Mono", monospace', fontSize: 11, letterSpacing: 2,
             color: P.inkMute, marginBottom: 14,
@@ -66,7 +62,6 @@ window.AboutPage = function AboutPage({ palette }) {
     <window.PageShell palette={P}
       title="about" accent={accent}
       subtitle={<><em style={{ color: accent }}>Electrical & Computer Engineering</em> at Princeton</>}
-      backdrop={<window.PaperBloom accent={accent} opacity={0.24} />}
     >
       <div style={{
         display: 'grid',
@@ -113,6 +108,45 @@ window.AboutPage = function AboutPage({ palette }) {
           ))}
         </aside>
       </div>
+
+      <section style={{
+        marginTop: compact ? 56 : 80,
+        maxWidth: 1080,
+        animation: 'inkFade 600ms var(--ease-out-quart) both',
+        animationDelay: '520ms',
+      }}>
+        <div style={{
+          display: 'flex', alignItems: 'baseline', gap: 14, flexWrap: 'wrap',
+          marginBottom: 18,
+        }}>
+          <div style={{
+            fontFamily: '"JetBrains Mono", monospace', fontSize: 10, letterSpacing: 1.6,
+            color: P.inkMute,
+          }}>
+            <span style={{ color: accent }}>●</span>
+            <span style={{ marginLeft: 10 }}>// AGENT NETWORK · WISDOM OF CROWDS</span>
+          </div>
+          <div style={{
+            fontFamily: '"Fraunces", serif', fontStyle: 'italic',
+            fontSize: 15, color: P.inkSoft, letterSpacing: -0.1,
+          }}>
+            90 sampled rollouts. Edges weighted by pairwise agreement.
+          </div>
+        </div>
+        <div style={{
+          background: P.paper, border: `1px solid ${P.rule}`,
+          padding: 0, position: 'relative',
+        }}>
+          <window.AgentGraph accent={accent} nodeCount={90} height={compact ? 280 : 360} />
+        </div>
+        <div style={{
+          marginTop: 12, fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
+          color: P.inkMute, letterSpacing: 0.5, lineHeight: 1.7,
+        }}>
+          live aggregation: many sampled answers, combined into one decision —
+          <span style={{ color: P.inkSoft }}> hover a node for its agreement score, push the cursor to deform the graph</span>
+        </div>
+      </section>
     </window.PageShell>
   );
 };

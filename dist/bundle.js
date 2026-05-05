@@ -224,115 +224,198 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
   ))));
 };
 
-/* ---- paper-bloom.jsx ---- */
-window.PaperBloom = function PaperBloom({ accent, opacity = 0.16 }) {
+/* ---- agent-graph.jsx ---- */
+window.AgentGraph = function AgentGraph({
+  accent,
+  nodeCount = 120,
+  height = 340
+}) {
+  const wrapRef = React.useRef(null);
   const canvasRef = React.useRef(null);
   const cleanupRef = React.useRef(null);
+  const [hovered, setHovered] = React.useState(null);
   React.useEffect(() => {
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const canvas = canvasRef.current;
-    if (!canvas || reduce) return;
-    const gl = canvas.getContext("webgl2", { premultipliedAlpha: false, antialias: false, alpha: true });
+    const wrap = wrapRef.current;
+    if (!canvas || !wrap || reduce) return;
+    const gl = canvas.getContext("webgl2", { premultipliedAlpha: false, antialias: true, alpha: true });
     if (!gl) return;
     const tint = parseAccentToRgb(accent);
-    const vertSrc = `#version 300 es
-      in vec2 a_pos;
-      out vec2 v_uv;
-      void main() {
-        v_uv = a_pos * 0.5 + 0.5;
-        gl_Position = vec4(a_pos, 0.0, 1.0);
-      }`;
-    const fragSrc = `#version 300 es
-      precision highp float;
-      in vec2 v_uv;
-      uniform vec2 u_res;       // canvas size in CSS pixels
-      uniform float u_time;     // seconds since start
-      uniform vec3 u_tint;
-      uniform float u_alpha;
-      uniform vec2 u_cursor;    // 0..1, normalized
-      uniform float u_cursorPulse;
-      out vec4 fragColor;
-
-      // Hash + value-noise (good enough for a slow wash, fast)
-      float hash(vec2 p) {
-        p = fract(p * vec2(123.34, 456.21));
-        p += dot(p, p + 78.233);
-        return fract(p.x * p.y);
-      }
-
-      float vnoise(vec2 p) {
-        vec2 i = floor(p);
-        vec2 f = fract(p);
-        float a = hash(i);
-        float b = hash(i + vec2(1.0, 0.0));
-        float c = hash(i + vec2(0.0, 1.0));
-        float d = hash(i + vec2(1.0, 1.0));
-        vec2 u = f * f * (3.0 - 2.0 * f);
-        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-      }
-
-      // Two-octave fbm with warped coordinates
-      float fbm(vec2 p, float t) {
-        // Domain warp using a coarse noise field
-        vec2 q = vec2(vnoise(p + vec2(0.0, t * 0.06)),
-                      vnoise(p + vec2(5.2, 1.3 - t * 0.05)));
-        vec2 r = vec2(vnoise(p + 4.0 * q + vec2(1.7, 9.2 + t * 0.04)),
-                      vnoise(p + 4.0 * q + vec2(8.3, 2.8 - t * 0.04)));
-        float n = vnoise(p + 4.0 * r);
-        n = n * 0.65 + vnoise(p * 2.1 + r * 1.5) * 0.35;
-        return n;
-      }
-
-      void main() {
-        // Aspect-corrected coordinate; controls grain scale
-        vec2 aspect = vec2(u_res.x / u_res.y, 1.0);
-        vec2 p = v_uv * aspect * 2.4;
-        float t = u_time * 0.05;            // slow drift
-
-        float n = fbm(p, t);
-
-        // Soft contrast: a thresholded but smooth bloom, sparse on the page
-        float bloom = smoothstep(0.48, 0.82, n);
-
-        // Mask away from the title text band (vertical 0.30 - 0.78)
-        float yMid = abs(v_uv.y - 0.55);
-        float textBand = smoothstep(0.10, 0.32, yMid);
-
-        // Edge fade horizontally so the wash never crashes into card edges
-        float xEdge = smoothstep(0.0, 0.20, v_uv.x) * smoothstep(1.0, 0.80, v_uv.x);
-
-        // Subtle cursor halo: a wider warm bloom near the cursor
-        float cd = distance(v_uv, u_cursor);
-        float halo = smoothstep(0.22, 0.0, cd) * u_cursorPulse * 0.55;
-
-        float a = (bloom * textBand * xEdge + halo * textBand * xEdge * 0.6) * u_alpha;
-        fragColor = vec4(u_tint, a);
-      }`;
-    const prog = makeProgram(gl, vertSrc, fragSrc);
-    if (!prog) return;
-    const quadBuf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const loc = {
-      a_pos: gl.getAttribLocation(prog, "a_pos"),
-      u_res: gl.getUniformLocation(prog, "u_res"),
-      u_time: gl.getUniformLocation(prog, "u_time"),
-      u_tint: gl.getUniformLocation(prog, "u_tint"),
-      u_alpha: gl.getUniformLocation(prog, "u_alpha"),
-      u_cursor: gl.getUniformLocation(prog, "u_cursor"),
-      u_cursorPulse: gl.getUniformLocation(prog, "u_cursorPulse")
+    const inkRgb = [0.13, 0.13, 0.15];
+    const N = nodeCount;
+    const nodes = new Array(N);
+    const clusters = 3;
+    const clusterCenters = [
+      { x: 0.22, y: 0.46 },
+      { x: 0.5, y: 0.58 },
+      { x: 0.78, y: 0.42 }
+    ];
+    for (let i = 0; i < N; i++) {
+      const ci = i % clusters;
+      const c = clusterCenters[ci];
+      nodes[i] = {
+        x: c.x + (Math.random() - 0.5) * 0.18,
+        y: c.y + (Math.random() - 0.5) * 0.3,
+        vx: 0,
+        vy: 0,
+        cluster: ci,
+        agreement: 0.5 + Math.random() * 0.5
+        // assigned per-rollout meta
+      };
+    }
+    const edges = [];
+    const seen = /* @__PURE__ */ new Set();
+    const addEdge = (i, j, w, target) => {
+      const k = i < j ? `${i},${j}` : `${j},${i}`;
+      if (seen.has(k)) return;
+      seen.add(k);
+      edges.push({ a: i, b: j, w, target });
     };
-    const cursor = { x: 0.5, y: 0.5, pulse: 0 };
+    for (let ci = 0; ci < clusters; ci++) {
+      const members = [];
+      for (let i = 0; i < N; i++) if (nodes[i].cluster === ci) members.push(i);
+      for (const i of members) {
+        const ds = members.filter((j) => j !== i).map((j) => {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          return { j, d: dx * dx + dy * dy };
+        }).sort((a, b) => a.d - b.d);
+        const k = 3;
+        for (let n = 0; n < Math.min(k, ds.length); n++) {
+          const j = ds[n].j;
+          const w = 0.55 + Math.random() * 0.4;
+          addEdge(i, j, w, 0.055 + (1 - w) * 0.04);
+        }
+      }
+    }
+    const bridges = 6;
+    for (let b = 0; b < bridges; b++) {
+      const ci = b % clusters;
+      const cj = (ci + 1) % clusters;
+      const aMembers = [];
+      const bMembers = [];
+      for (let i = 0; i < N; i++) {
+        if (nodes[i].cluster === ci) aMembers.push(i);
+        if (nodes[i].cluster === cj) bMembers.push(i);
+      }
+      const ai = aMembers[b * 7 % aMembers.length];
+      const bi = bMembers[b * 11 % bMembers.length];
+      addEdge(ai, bi, 0.18, 0.3);
+    }
+    const edgeVert = `#version 300 es
+      in vec2 a_pos;
+      in float a_alpha;
+      out float v_alpha;
+      uniform vec2 u_size;
+      void main() {
+        vec2 ndc = (a_pos * 2.0 - 1.0) * vec2(1.0, -1.0);
+        gl_Position = vec4(ndc, 0.0, 1.0);
+        v_alpha = a_alpha;
+      }`;
+    const edgeFrag = `#version 300 es
+      precision highp float;
+      in float v_alpha;
+      uniform vec3 u_tint;
+      uniform vec3 u_ink;
+      out vec4 fragColor;
+      void main() {
+        // Mostly ink, slight tint for higher-weight edges
+        vec3 c = mix(u_ink, u_tint, smoothstep(0.3, 1.0, v_alpha));
+        fragColor = vec4(c, v_alpha * 0.85);
+      }`;
+    const nodeVert = `#version 300 es
+      in vec2 a_pos;
+      in float a_size;
+      in float a_glow;
+      out float v_glow;
+      uniform vec2 u_size;
+      void main() {
+        vec2 ndc = (a_pos * 2.0 - 1.0) * vec2(1.0, -1.0);
+        gl_Position = vec4(ndc, 0.0, 1.0);
+        gl_PointSize = a_size;
+        v_glow = a_glow;
+      }`;
+    const nodeFrag = `#version 300 es
+      precision highp float;
+      in float v_glow;
+      uniform vec3 u_tint;
+      uniform vec3 u_ink;
+      out vec4 fragColor;
+      void main() {
+        vec2 c = gl_PointCoord - 0.5;
+        float d = length(c) * 2.0;
+        float core = smoothstep(1.0, 0.0, d);
+        float halo = smoothstep(1.6, 0.55, d) * v_glow * 0.6;
+        vec3 col = mix(u_ink, u_tint, 0.45 + 0.55 * v_glow);
+        float a = core + halo;
+        if (a < 0.02) discard;
+        fragColor = vec4(col, a);
+      }`;
+    const edgeProg = makeProgram(gl, edgeVert, edgeFrag);
+    const nodeProg = makeProgram(gl, nodeVert, nodeFrag);
+    if (!edgeProg || !nodeProg) return;
+    const edgeBuf = gl.createBuffer();
+    const nodeBuf = gl.createBuffer();
+    const edgeData = new Float32Array(edges.length * 2 * 3);
+    const nodeData = new Float32Array(N * 4);
+    const eLoc = {
+      a_pos: gl.getAttribLocation(edgeProg, "a_pos"),
+      a_alpha: gl.getAttribLocation(edgeProg, "a_alpha"),
+      u_tint: gl.getUniformLocation(edgeProg, "u_tint"),
+      u_ink: gl.getUniformLocation(edgeProg, "u_ink"),
+      u_size: gl.getUniformLocation(edgeProg, "u_size")
+    };
+    const nLoc = {
+      a_pos: gl.getAttribLocation(nodeProg, "a_pos"),
+      a_size: gl.getAttribLocation(nodeProg, "a_size"),
+      a_glow: gl.getAttribLocation(nodeProg, "a_glow"),
+      u_tint: gl.getUniformLocation(nodeProg, "u_tint"),
+      u_ink: gl.getUniformLocation(nodeProg, "u_ink"),
+      u_size: gl.getUniformLocation(nodeProg, "u_size")
+    };
+    const cursor = { x: -1, y: -1, active: false };
     const onMove = (e) => {
       const rect = canvas.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
-      const y = 1 - (e.clientY - rect.top) / rect.height;
-      if (x < 0 || x > 1 || y < 0 || y > 1) return;
+      const y = (e.clientY - rect.top) / rect.height;
+      if (x < 0 || x > 1 || y < 0 || y > 1) {
+        cursor.active = false;
+        return;
+      }
       cursor.x = x;
       cursor.y = y;
-      cursor.pulse = Math.min(1, cursor.pulse + 0.3);
+      cursor.active = true;
     };
-    window.addEventListener("mousemove", onMove);
+    const onLeave = () => {
+      cursor.active = false;
+    };
+    canvas.addEventListener("pointermove", onMove);
+    canvas.addEventListener("pointerleave", onLeave);
+    let lastHover = null;
+    const hoverFn = () => {
+      if (!cursor.active) {
+        if (lastHover !== null) {
+          lastHover = null;
+          setHovered(null);
+        }
+        return;
+      }
+      let best = -1, bestD = 9e-4;
+      for (let i = 0; i < N; i++) {
+        const dx = nodes[i].x - cursor.x;
+        const dy = nodes[i].y - cursor.y;
+        const d = dx * dx + dy * dy;
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      }
+      if (best !== lastHover) {
+        lastHover = best;
+        setHovered(best >= 0 ? { idx: best, agreement: nodes[best].agreement, cluster: nodes[best].cluster } : null);
+      }
+    };
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
@@ -346,9 +429,177 @@ window.PaperBloom = function PaperBloom({ accent, opacity = 0.16 }) {
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
+    const REPULSION = 4e-4;
+    const REPULSION_CUTOFF_SQ = 0.06;
+    const SPRING_K = 0.06;
+    const CENTER_K = 5e-3;
+    const DAMP = 0.84;
+    const CURSOR_R = 0.18;
+    const CURSOR_F = 7e-3;
+    const JITTER = 1e-4;
+    const step = () => {
+      const a = canvas.width / canvas.height;
+      const ia = 1 / a;
+      for (let i = 0; i < N; i++) {
+        const ni = nodes[i];
+        let fx = 0, fy = 0;
+        for (let j = 0; j < N; j++) {
+          if (i === j) continue;
+          const nj = nodes[j];
+          let dx = (ni.x - nj.x) * a;
+          let dy = ni.y - nj.y;
+          const d2 = dx * dx + dy * dy + 1e-5;
+          if (d2 > REPULSION_CUTOFF_SQ) continue;
+          const inv = REPULSION / d2;
+          fx += dx * inv;
+          fy += dy * inv;
+        }
+        fx += (0.5 - ni.x) * CENTER_K;
+        fy += (0.5 - ni.y) * CENTER_K;
+        fx += (Math.random() - 0.5) * JITTER;
+        fy += (Math.random() - 0.5) * JITTER;
+        if (cursor.active) {
+          let dx = (ni.x - cursor.x) * a;
+          let dy = ni.y - cursor.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < CURSOR_R) {
+            const f = (1 - d / CURSOR_R) * CURSOR_F / Math.max(d, 0.01);
+            fx += dx * f;
+            fy += dy * f;
+          }
+        }
+        ni.vx = (ni.vx + fx * ia) * DAMP;
+        ni.vy = (ni.vy + fy) * DAMP;
+      }
+      for (let e = 0; e < edges.length; e++) {
+        const ed = edges[e];
+        const ni = nodes[ed.a], nj = nodes[ed.b];
+        let dx = (nj.x - ni.x) * a;
+        let dy = nj.y - ni.y;
+        const d = Math.sqrt(dx * dx + dy * dy) + 1e-5;
+        const f = (d - ed.target) * SPRING_K * ed.w;
+        const fx = dx / d * f;
+        const fy = dy / d * f;
+        ni.vx += fx * ia;
+        ni.vy += fy;
+        nj.vx -= fx * ia;
+        nj.vy -= fy;
+      }
+      const WALL_STRENGTH = 0.02;
+      const WALL_PAD_X = 0.1;
+      const WALL_PAD_Y = 0.13;
+      for (let i = 0; i < N; i++) {
+        const n = nodes[i];
+        const distLeft = n.x - WALL_PAD_X;
+        const distRight = 1 - WALL_PAD_X - n.x;
+        const distTop = n.y - WALL_PAD_Y;
+        const distBot = 1 - WALL_PAD_Y - n.y;
+        if (distLeft < 0) n.vx += -distLeft * WALL_STRENGTH;
+        if (distRight < 0) n.vx -= -distRight * WALL_STRENGTH;
+        if (distTop < 0) n.vy += -distTop * WALL_STRENGTH;
+        if (distBot < 0) n.vy -= -distBot * WALL_STRENGTH;
+      }
+      for (let i = 0; i < N; i++) {
+        const n = nodes[i];
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0.015) {
+          n.x = 0.015;
+          n.vx = 0;
+        }
+        if (n.x > 0.985) {
+          n.x = 0.985;
+          n.vx = 0;
+        }
+        if (n.y < 0.025) {
+          n.y = 0.025;
+          n.vy = 0;
+        }
+        if (n.y > 0.975) {
+          n.y = 0.975;
+          n.vy = 0;
+        }
+      }
+    };
+    const render = () => {
+      const dpr = canvas.width / canvas.clientWidth;
+      const hi = lastHover;
+      let p = 0;
+      for (let i = 0; i < edges.length; i++) {
+        const ed = edges[i];
+        const a = nodes[ed.a], b = nodes[ed.b];
+        let alpha = ed.w;
+        if (hi !== null && (ed.a === hi || ed.b === hi)) alpha = Math.min(1, ed.w + 0.4);
+        edgeData[p++] = a.x;
+        edgeData[p++] = a.y;
+        edgeData[p++] = alpha;
+        edgeData[p++] = b.x;
+        edgeData[p++] = b.y;
+        edgeData[p++] = alpha;
+      }
+      let q = 0;
+      for (let i = 0; i < N; i++) {
+        const n = nodes[i];
+        let size = 8 * dpr + n.agreement * 4 * dpr;
+        let glow = n.agreement * 0.55;
+        if (hi !== null) {
+          if (i === hi) {
+            size += 7 * dpr;
+            glow = 1;
+          } else {
+            for (let e = 0; e < edges.length; e++) {
+              const ed = edges[e];
+              if (ed.a === hi && ed.b === i) {
+                glow = Math.max(glow, ed.w);
+                size += 2 * dpr;
+                break;
+              }
+              if (ed.b === hi && ed.a === i) {
+                glow = Math.max(glow, ed.w);
+                size += 2 * dpr;
+                break;
+              }
+            }
+          }
+        }
+        nodeData[q++] = n.x;
+        nodeData[q++] = n.y;
+        nodeData[q++] = size;
+        nodeData[q++] = glow;
+      }
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.enable(gl.BLEND);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.useProgram(edgeProg);
+      gl.bindBuffer(gl.ARRAY_BUFFER, edgeBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, edgeData, gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(eLoc.a_pos);
+      gl.vertexAttribPointer(eLoc.a_pos, 2, gl.FLOAT, false, 12, 0);
+      gl.enableVertexAttribArray(eLoc.a_alpha);
+      gl.vertexAttribPointer(eLoc.a_alpha, 1, gl.FLOAT, false, 12, 8);
+      gl.uniform3f(eLoc.u_tint, tint[0], tint[1], tint[2]);
+      gl.uniform3f(eLoc.u_ink, inkRgb[0], inkRgb[1], inkRgb[2]);
+      gl.uniform2f(eLoc.u_size, canvas.width, canvas.height);
+      gl.lineWidth(1.5);
+      gl.drawArrays(gl.LINES, 0, edges.length * 2);
+      gl.useProgram(nodeProg);
+      gl.bindBuffer(gl.ARRAY_BUFFER, nodeBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, nodeData, gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(nLoc.a_pos);
+      gl.vertexAttribPointer(nLoc.a_pos, 2, gl.FLOAT, false, 16, 0);
+      gl.enableVertexAttribArray(nLoc.a_size);
+      gl.vertexAttribPointer(nLoc.a_size, 1, gl.FLOAT, false, 16, 8);
+      gl.enableVertexAttribArray(nLoc.a_glow);
+      gl.vertexAttribPointer(nLoc.a_glow, 1, gl.FLOAT, false, 16, 12);
+      gl.uniform3f(nLoc.u_tint, tint[0], tint[1], tint[2]);
+      gl.uniform3f(nLoc.u_ink, inkRgb[0], inkRgb[1], inkRgb[2]);
+      gl.uniform2f(nLoc.u_size, canvas.width, canvas.height);
+      gl.drawArrays(gl.POINTS, 0, N);
+    };
     let raf = 0;
     let visible = true;
-    const start = performance.now();
     const onVis = () => {
       visible = !document.hidden;
       if (visible) raf = requestAnimationFrame(loop);
@@ -359,47 +610,47 @@ window.PaperBloom = function PaperBloom({ accent, opacity = 0.16 }) {
         raf = 0;
         return;
       }
-      const now = (performance.now() - start) / 1e3;
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.clearColor(0, 0, 0, 0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.useProgram(prog);
-      gl.enable(gl.BLEND);
-      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-      gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
-      gl.enableVertexAttribArray(loc.a_pos);
-      gl.vertexAttribPointer(loc.a_pos, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform2f(loc.u_res, canvas.width, canvas.height);
-      gl.uniform1f(loc.u_time, now);
-      gl.uniform3f(loc.u_tint, tint[0], tint[1], tint[2]);
-      gl.uniform1f(loc.u_alpha, opacity);
-      gl.uniform2f(loc.u_cursor, cursor.x, cursor.y);
-      gl.uniform1f(loc.u_cursorPulse, cursor.pulse);
-      cursor.pulse *= 0.96;
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      step();
+      hoverFn();
+      render();
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     cleanupRef.current = () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("mousemove", onMove);
+      canvas.removeEventListener("pointermove", onMove);
+      canvas.removeEventListener("pointerleave", onLeave);
       document.removeEventListener("visibilitychange", onVis);
       ro.disconnect();
-      gl.deleteBuffer(quadBuf);
-      gl.deleteProgram(prog);
+      gl.deleteBuffer(edgeBuf);
+      gl.deleteBuffer(nodeBuf);
+      gl.deleteProgram(edgeProg);
+      gl.deleteProgram(nodeProg);
     };
     return () => {
       if (cleanupRef.current) cleanupRef.current();
     };
-  }, [accent, opacity]);
-  return /* @__PURE__ */ React.createElement("canvas", { ref: canvasRef, "aria-hidden": "true", style: {
+  }, [accent, nodeCount]);
+  return /* @__PURE__ */ React.createElement("div", { ref: wrapRef, style: { position: "relative", width: "100%", height } }, /* @__PURE__ */ React.createElement("canvas", { ref: canvasRef, "aria-hidden": "true", style: {
     position: "absolute",
     inset: 0,
     width: "100%",
     height: "100%",
+    display: "block",
+    cursor: "crosshair"
+  } }), hovered && /* @__PURE__ */ React.createElement("div", { style: {
+    position: "absolute",
+    top: 12,
+    right: 14,
     pointerEvents: "none",
-    display: "block"
-  } });
+    fontFamily: '"JetBrains Mono", monospace',
+    fontSize: 10,
+    letterSpacing: 0.5,
+    color: "oklch(0.40 0.02 60)",
+    background: "oklch(0.99 0.008 85)",
+    padding: "5px 9px",
+    border: "1px solid oklch(0.82 0.02 70)"
+  } }, "rollout #", String(hovered.idx).padStart(3, "0"), " \xB7 cluster ", hovered.cluster + 1, " \xB7 agreement ", hovered.agreement.toFixed(2)));
 };
 function makeProgram(gl, vertSrc, fragSrc) {
   const make = (type, src) => {
@@ -439,7 +690,7 @@ function parseAccentToRgb(str) {
 }
 
 /* ---- pages-about.jsx ---- */
-window.PageShell = function PageShell({ palette, title, subtitle, accent, children, backdrop = null }) {
+window.PageShell = function PageShell({ palette, title, subtitle, accent, children }) {
   const P = palette;
   const { width } = window.useViewport();
   const compact = width < 1100;
@@ -450,11 +701,8 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
     display: "grid",
     gridTemplateColumns: "1fr",
     gap: compact ? 20 : 40,
-    alignItems: "end",
-    position: "relative",
-    overflow: "hidden",
-    minHeight: backdrop ? compact ? 220 : 300 : void 0
-  } }, backdrop, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: {
+    alignItems: "end"
+  } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: {
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 11,
     letterSpacing: 2,
@@ -500,8 +748,7 @@ window.AboutPage = function AboutPage({ palette }) {
       palette: P,
       title: "about",
       accent,
-      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Electrical & Computer Engineering"), " at Princeton"),
-      backdrop: /* @__PURE__ */ React.createElement(window.PaperBloom, { accent, opacity: 0.24 })
+      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Electrical & Computer Engineering"), " at Princeton")
     },
     /* @__PURE__ */ React.createElement("div", { style: {
       display: "grid",
@@ -544,7 +791,42 @@ window.AboutPage = function AboutPage({ palette }) {
       fontSize: 12,
       animation: "inkFade 420ms var(--ease-out-quart) both",
       animationDelay: `${380 + i * 55}ms`
-    } }, /* @__PURE__ */ React.createElement("span", { style: { color: P.inkMute, letterSpacing: 0.3 } }, k), /* @__PURE__ */ React.createElement("span", { style: { color: P.ink, textAlign: "right" } }, v)))))
+    } }, /* @__PURE__ */ React.createElement("span", { style: { color: P.inkMute, letterSpacing: 0.3 } }, k), /* @__PURE__ */ React.createElement("span", { style: { color: P.ink, textAlign: "right" } }, v))))),
+    /* @__PURE__ */ React.createElement("section", { style: {
+      marginTop: compact ? 56 : 80,
+      maxWidth: 1080,
+      animation: "inkFade 600ms var(--ease-out-quart) both",
+      animationDelay: "520ms"
+    } }, /* @__PURE__ */ React.createElement("div", { style: {
+      display: "flex",
+      alignItems: "baseline",
+      gap: 14,
+      flexWrap: "wrap",
+      marginBottom: 18
+    } }, /* @__PURE__ */ React.createElement("div", { style: {
+      fontFamily: '"JetBrains Mono", monospace',
+      fontSize: 10,
+      letterSpacing: 1.6,
+      color: P.inkMute
+    } }, /* @__PURE__ */ React.createElement("span", { style: { color: accent } }, "\u25CF"), /* @__PURE__ */ React.createElement("span", { style: { marginLeft: 10 } }, "// AGENT NETWORK \xB7 WISDOM OF CROWDS")), /* @__PURE__ */ React.createElement("div", { style: {
+      fontFamily: '"Fraunces", serif',
+      fontStyle: "italic",
+      fontSize: 15,
+      color: P.inkSoft,
+      letterSpacing: -0.1
+    } }, "90 sampled rollouts. Edges weighted by pairwise agreement.")), /* @__PURE__ */ React.createElement("div", { style: {
+      background: P.paper,
+      border: `1px solid ${P.rule}`,
+      padding: 0,
+      position: "relative"
+    } }, /* @__PURE__ */ React.createElement(window.AgentGraph, { accent, nodeCount: 90, height: compact ? 280 : 360 })), /* @__PURE__ */ React.createElement("div", { style: {
+      marginTop: 12,
+      fontFamily: '"JetBrains Mono", monospace',
+      fontSize: 10,
+      color: P.inkMute,
+      letterSpacing: 0.5,
+      lineHeight: 1.7
+    } }, "live aggregation: many sampled answers, combined into one decision \u2014", /* @__PURE__ */ React.createElement("span", { style: { color: P.inkSoft } }, " hover a node for its agreement score, push the cursor to deform the graph")))
   );
 };
 
