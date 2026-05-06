@@ -112,31 +112,6 @@ window.WorkPage = function WorkPage({ palette }) {
           </article>
         ))}
       </div>
-
-      <div style={{
-        marginTop: 56, padding: '28px 32px', background: P.paper,
-        border: `1px solid ${P.rule}`, maxWidth: 1040,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 20, flexWrap: 'wrap',
-      }}>
-        <div>
-          <div style={{
-            fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-            letterSpacing: 1.4, color: P.inkMute, marginBottom: 6,
-          }}>// APPENDIX</div>
-          <div style={{
-            fontFamily: '"Fraunces", serif', fontSize: 22,
-            letterSpacing: -0.4, color: P.ink,
-          }}>Resume</div>
-        </div>
-        <a href="https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=drive_link"
-          target="_blank" rel="noopener noreferrer" style={{
-          textDecoration: 'none', padding: '12px 22px',
-          background: P.ink, color: P.bg, fontFamily: 'Inter, sans-serif',
-          fontSize: 14, fontWeight: 500, letterSpacing: 0.2,
-          display: 'inline-flex', alignItems: 'center', gap: 10,
-        }}>resume.pdf ↗</a>
-      </div>
     </window.PageShell>
   );
 };

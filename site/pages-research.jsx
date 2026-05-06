@@ -94,23 +94,6 @@ window.ResearchPage = function ResearchPage({ palette }) {
           </article>
         ))}
       </div>
-
-      <div style={{
-        marginTop: 48, maxWidth: 760,
-        background: P.paper, border: `1px solid ${P.rule}`,
-        padding: compact ? '24px 22px' : '30px 34px',
-      }}>
-        <div style={{
-          fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-          letterSpacing: 1.4, color: P.inkMute, marginBottom: 12,
-        }}>CURRENT THREADS</div>
-        <blockquote style={{
-          margin: 0, fontFamily: '"Fraunces", serif', fontStyle: 'italic',
-          fontSize: 22, lineHeight: 1.5, color: P.inkSoft, textWrap: 'pretty',
-        }}>
-          The failures that matter, in agents or in spatial perception, are usually the ones least seen. Better evaluation is the throughline.
-        </blockquote>
-      </div>
     </window.PageShell>
   );
 };

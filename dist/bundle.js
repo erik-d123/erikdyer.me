@@ -422,28 +422,7 @@ window.ResearchPage = function ResearchPage({ palette }) {
       color: P.inkSoft,
       letterSpacing: 0.3,
       background: P.paper
-    } }, tag))))))),
-    /* @__PURE__ */ React.createElement("div", { style: {
-      marginTop: 48,
-      maxWidth: 760,
-      background: P.paper,
-      border: `1px solid ${P.rule}`,
-      padding: compact ? "24px 22px" : "30px 34px"
-    } }, /* @__PURE__ */ React.createElement("div", { style: {
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: 10,
-      letterSpacing: 1.4,
-      color: P.inkMute,
-      marginBottom: 12
-    } }, "CURRENT THREADS"), /* @__PURE__ */ React.createElement("blockquote", { style: {
-      margin: 0,
-      fontFamily: '"Fraunces", serif',
-      fontStyle: "italic",
-      fontSize: 22,
-      lineHeight: 1.5,
-      color: P.inkSoft,
-      textWrap: "pretty"
-    } }, "The failures that matter, in agents or in spatial perception, are usually the ones least seen. Better evaluation is the throughline."))
+    } }, tag)))))))
   );
 };
 
@@ -565,51 +544,7 @@ window.WorkPage = function WorkPage({ palette }) {
       color: P.inkSoft,
       letterSpacing: 0.3,
       background: P.paper
-    } }, s))))))),
-    /* @__PURE__ */ React.createElement("div", { style: {
-      marginTop: 56,
-      padding: "28px 32px",
-      background: P.paper,
-      border: `1px solid ${P.rule}`,
-      maxWidth: 1040,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 20,
-      flexWrap: "wrap"
-    } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: {
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: 10,
-      letterSpacing: 1.4,
-      color: P.inkMute,
-      marginBottom: 6
-    } }, "// APPENDIX"), /* @__PURE__ */ React.createElement("div", { style: {
-      fontFamily: '"Fraunces", serif',
-      fontSize: 22,
-      letterSpacing: -0.4,
-      color: P.ink
-    } }, "Resume")), /* @__PURE__ */ React.createElement(
-      "a",
-      {
-        href: "https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=drive_link",
-        target: "_blank",
-        rel: "noopener noreferrer",
-        style: {
-          textDecoration: "none",
-          padding: "12px 22px",
-          background: P.ink,
-          color: P.bg,
-          fontFamily: "Inter, sans-serif",
-          fontSize: 14,
-          fontWeight: 500,
-          letterSpacing: 0.2,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 10
-        }
-      },
-      "resume.pdf \u2197"
-    ))
+    } }, s)))))))
   );
 };
 
