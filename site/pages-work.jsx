@@ -43,16 +43,14 @@ window.WorkPage = function WorkPage({ palette }) {
       subtitle={<><em style={{ color: accent }}>Infrastructure</em> for AI systems</>}
     >
       <div style={{ maxWidth: 1040, position: 'relative' }}>
-        {!compact && <div style={{
-          position: 'absolute', left: 180, top: 0, bottom: 0, width: 1,
-          background: P.rule,
-        }} />}
         {jobs.map((j, i) => (
           <article key={j.co} style={{
             position: 'relative', display: 'grid',
             gridTemplateColumns: compact ? '1fr' : '160px 40px 1fr',
             gap: compact ? 14 : 0,
-            padding: '36px 0', borderBottom: i === jobs.length - 1 ? 'none' : `1px dashed ${P.rule}`,
+            padding: compact ? '28px 22px' : '34px 36px',
+            background: P.paper, border: `1px solid ${P.rule}`,
+            marginBottom: 18,
             animation: 'inkFade 460ms var(--ease-out-quart) both',
             animationDelay: `${320 + i * 90}ms`,
           }}>
@@ -78,7 +76,7 @@ window.WorkPage = function WorkPage({ palette }) {
               <div style={{
                 position: 'absolute', left: 16, top: 6,
                 width: 14, height: 14, borderRadius: '50%',
-                background: P.bg, border: `2px solid ${accent}`,
+                background: P.paper, border: `2px solid ${accent}`,
                 boxShadow: `0 0 0 5px ${accent.replace(')', ' / 0.12)')}`,
               }} />
             </div>}

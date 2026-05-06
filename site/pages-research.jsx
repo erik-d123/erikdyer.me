@@ -40,7 +40,9 @@ window.ResearchPage = function ResearchPage({ palette }) {
             display: 'grid',
             gridTemplateColumns: compact ? '1fr' : '160px 1fr',
             gap: compact ? 18 : 48,
-            padding: '36px 0', borderTop: i === 0 ? 'none' : `1px solid ${P.rule}`,
+            padding: compact ? '28px 22px' : '34px 36px',
+            background: P.paper, border: `1px solid ${P.rule}`,
+            marginBottom: 18,
             animation: 'inkFade 460ms var(--ease-out-quart) both',
             animationDelay: `${320 + i * 90}ms`,
           }}>
@@ -94,8 +96,9 @@ window.ResearchPage = function ResearchPage({ palette }) {
       </div>
 
       <div style={{
-        marginTop: 64, maxWidth: 760, paddingTop: 28,
-        borderTop: `1px solid ${P.rule}`,
+        marginTop: 48, maxWidth: 760,
+        background: P.paper, border: `1px solid ${P.rule}`,
+        padding: compact ? '24px 22px' : '30px 34px',
       }}>
         <div style={{
           fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
