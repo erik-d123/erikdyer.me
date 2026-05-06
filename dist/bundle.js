@@ -370,8 +370,10 @@ window.ResearchPage = function ResearchPage({ palette }) {
       display: "grid",
       gridTemplateColumns: compact ? "1fr" : "160px 1fr",
       gap: compact ? 18 : 48,
-      padding: "36px 0",
-      borderTop: i === 0 ? "none" : `1px solid ${P.rule}`,
+      padding: compact ? "28px 22px" : "34px 36px",
+      background: P.paper,
+      border: `1px solid ${P.rule}`,
+      marginBottom: 18,
       animation: "inkFade 460ms var(--ease-out-quart) both",
       animationDelay: `${320 + i * 90}ms`
     } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", paddingTop: 4 } }, /* @__PURE__ */ React.createElement("div", { style: {
@@ -422,10 +424,11 @@ window.ResearchPage = function ResearchPage({ palette }) {
       background: P.paper
     } }, tag))))))),
     /* @__PURE__ */ React.createElement("div", { style: {
-      marginTop: 64,
+      marginTop: 48,
       maxWidth: 760,
-      paddingTop: 28,
-      borderTop: `1px solid ${P.rule}`
+      background: P.paper,
+      border: `1px solid ${P.rule}`,
+      padding: compact ? "24px 22px" : "30px 34px"
     } }, /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 10,
@@ -488,20 +491,15 @@ window.WorkPage = function WorkPage({ palette }) {
       accent,
       subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Infrastructure"), " for AI systems")
     },
-    /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1040, position: "relative" } }, !compact && /* @__PURE__ */ React.createElement("div", { style: {
-      position: "absolute",
-      left: 180,
-      top: 0,
-      bottom: 0,
-      width: 1,
-      background: P.rule
-    } }), jobs.map((j, i) => /* @__PURE__ */ React.createElement("article", { key: j.co, style: {
+    /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1040, position: "relative" } }, jobs.map((j, i) => /* @__PURE__ */ React.createElement("article", { key: j.co, style: {
       position: "relative",
       display: "grid",
       gridTemplateColumns: compact ? "1fr" : "160px 40px 1fr",
       gap: compact ? 14 : 0,
-      padding: "36px 0",
-      borderBottom: i === jobs.length - 1 ? "none" : `1px dashed ${P.rule}`,
+      padding: compact ? "28px 22px" : "34px 36px",
+      background: P.paper,
+      border: `1px solid ${P.rule}`,
+      marginBottom: 18,
       animation: "inkFade 460ms var(--ease-out-quart) both",
       animationDelay: `${320 + i * 90}ms`
     } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: {
@@ -531,7 +529,7 @@ window.WorkPage = function WorkPage({ palette }) {
       width: 14,
       height: 14,
       borderRadius: "50%",
-      background: P.bg,
+      background: P.paper,
       border: `2px solid ${accent}`,
       boxShadow: `0 0 0 5px ${accent.replace(")", " / 0.12)")}`
     } })), /* @__PURE__ */ React.createElement("div", { style: { paddingLeft: compact ? 0 : 24 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("h2", { style: {
