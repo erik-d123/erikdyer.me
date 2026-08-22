@@ -3,6 +3,7 @@
 window.ResearchPage = function ResearchPage({ palette }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.research];
+  const textAccent = window.ACCENT_TEXT[window.PAGE_ACCENT.research] || accent;
   const { width } = window.useViewport();
   const compact = width < 760;
 
@@ -11,11 +12,11 @@ window.ResearchPage = function ResearchPage({ palette }) {
       id: 'nlp',
       name: 'Princeton NLP Lab',
       advisor: 'Karthik R. Narasimhan',
-      role: 'Senior Thesis',
-      period: '2025 to present',
-      topic: 'Agentic Systems',
-      desc: 'Studying how LLM agents coordinate, and fail, on long-horizon tasks',
-      tags: ['llm agents', 'benchmarks', 'memory', 'evaluation'],
+      role: 'Undergraduate Researcher',
+      period: '2026 to present',
+      topic: 'Agent Evaluation & Coordination',
+      desc: 'Evaluating long-horizon AI agents to characterize error compounding, context drift, and recovery failures',
+      tags: ['llm agents', 'benchmarks', 'context', 'evaluation'],
     },
     {
       id: 'pvl',
@@ -23,8 +24,8 @@ window.ResearchPage = function ResearchPage({ palette }) {
       advisor: 'Jia Deng',
       role: 'Undergraduate Researcher',
       period: '2024 to present',
-      topic: 'Computer Vision, SLAM & Segmentation',
-      desc: 'Research engineering for 3D scene understanding with sim-to-real data, point clouds, and spatial models',
+      topic: '3D Perception & Synthetic Data',
+      desc: 'Added material-aware LiDAR simulation with pose and semantic ground truth to Infinigen, contributing to an 8.4% reduction in learned SLAM localization error through procedural pretraining',
       tags: ['3d vision', 'lidar', 'slam', 'point clouds'],
     },
   ];
@@ -32,7 +33,7 @@ window.ResearchPage = function ResearchPage({ palette }) {
   return (
     <window.PageShell palette={P}
       title="research" accent={accent}
-      subtitle={<><em style={{ color: accent }}>Agentic systems</em> and perception</>}
+      subtitle={<><em style={{ color: accent }}>Agent evaluation</em> and 3D perception</>}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 0, maxWidth: 1000 }}>
         {labs.map((lab, i) => (
@@ -40,16 +41,15 @@ window.ResearchPage = function ResearchPage({ palette }) {
             display: 'grid',
             gridTemplateColumns: compact ? '1fr' : '160px 1fr',
             gap: compact ? 18 : 48,
-            padding: compact ? '28px 22px' : '34px 36px',
-            background: P.paper, border: `1px solid ${P.rule}`,
-            marginBottom: 18,
+            padding: compact ? '28px 0' : '34px 0',
+            borderTop: i === 0 ? 'none' : `1px solid ${P.rule}`,
             animation: 'inkFade 460ms var(--ease-out-quart) both',
             animationDelay: `${320 + i * 90}ms`,
           }}>
             <div style={{ position: 'relative', paddingTop: 4 }}>
               <div style={{
                 fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
-                letterSpacing: 1, color: accent, marginBottom: 8,
+                letterSpacing: 1, color: textAccent, marginBottom: 8,
               }}>{lab.period}</div>
               <div style={{
                 fontFamily: '"Fraunces", serif', fontStyle: 'italic',
@@ -73,7 +73,7 @@ window.ResearchPage = function ResearchPage({ palette }) {
               }}>
                 ADVISED BY <span style={{ color: P.ink }}>{lab.advisor}</span>
                 <span style={{ margin: '0 10px', color: P.inkMute }}>·</span>
-                TOPIC <span style={{ color: accent }}>{lab.topic.toUpperCase()}</span>
+                TOPIC <span style={{ color: textAccent }}>{lab.topic.toUpperCase()}</span>
               </div>
 
               <p style={{

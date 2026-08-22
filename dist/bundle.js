@@ -7,7 +7,7 @@ window.PALETTES = {
     bgAlt: "oklch(0.94 0.015 85)",
     ink: "oklch(0.22 0.02 60)",
     inkSoft: "oklch(0.40 0.02 60)",
-    inkMute: "oklch(0.60 0.015 70)",
+    inkMute: "oklch(0.52 0.015 70)",
     rule: "oklch(0.82 0.02 70)",
     paper: "oklch(0.99 0.008 85)"
   },
@@ -17,7 +17,7 @@ window.PALETTES = {
     bgAlt: "oklch(0.94 0.008 240)",
     ink: "oklch(0.22 0.015 260)",
     inkSoft: "oklch(0.42 0.015 260)",
-    inkMute: "oklch(0.60 0.012 260)",
+    inkMute: "oklch(0.52 0.012 260)",
     rule: "oklch(0.85 0.01 250)",
     paper: "oklch(0.99 0.003 240)"
   }
@@ -26,6 +26,11 @@ window.ACCENTS = {
   sage: "oklch(0.60 0.10 150)",
   periwinkle: "oklch(0.58 0.14 265)",
   coral: "oklch(0.65 0.17 28)"
+};
+window.ACCENT_TEXT = {
+  sage: "oklch(0.51 0.10 150)",
+  periwinkle: "oklch(0.525 0.14 265)",
+  coral: "oklch(0.54 0.17 28)"
 };
 window.PAGE_ACCENT = {
   about: "periwinkle",
@@ -36,20 +41,48 @@ window.PAGE_ACCENT = {
 };
 window.STATUS_ACCENT = {
   research: "sage",
+  experiment: "periwinkle",
   public: "periwinkle",
   course: "coral"
 };
 window.CONTACT_LINKS = {
-  email: "mailto:erikdyer@princeton.edu",
+  resume: "https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=drive_link",
+  email: "mailto:ed1783@princeton.edu",
   github: "https://github.com/erik-d123",
   linkedin: "https://www.linkedin.com/in/erikcdyer"
 };
 window.FEATURE_FLAGS = {
   timeline: false
 };
+window.MotionContext = React.createContext({
+  animateEntrance: true,
+  reducedMotion: false
+});
+window.useReducedMotion = function useReducedMotion() {
+  const getPreference = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const [reduced, setReduced] = React.useState(getPreference);
+  React.useEffect(() => {
+    if (!window.matchMedia) return void 0;
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = (event) => setReduced(event.matches);
+    setReduced(query.matches);
+    if (query.addEventListener) query.addEventListener("change", onChange);
+    else query.addListener(onChange);
+    return () => {
+      if (query.removeEventListener) query.removeEventListener("change", onChange);
+      else query.removeListener(onChange);
+    };
+  }, []);
+  return reduced;
+};
 window.useTick = function useTick() {
   const [t, setT] = React.useState(0);
+  const reducedMotion = window.useReducedMotion();
   React.useEffect(() => {
+    if (reducedMotion) {
+      setT(0);
+      return void 0;
+    }
     let raf, start = performance.now();
     const loop = (now) => {
       setT((now - start) / 1e3);
@@ -57,7 +90,7 @@ window.useTick = function useTick() {
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [reducedMotion]);
   return t;
 };
 window.useViewport = function useViewport() {
@@ -105,7 +138,8 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
     color: P.ink,
     gap: narrow ? 14 : compact ? 18 : 0,
     alignItems: narrow ? "stretch" : compact ? "center" : "stretch",
-    overflowX: narrow ? "visible" : compact ? "auto" : "visible"
+    overflowX: narrow ? "visible" : compact ? "auto" : "visible",
+    flexWrap: compact ? "wrap" : "nowrap"
   } }, /* @__PURE__ */ React.createElement("div", { style: { minWidth: narrow ? 0 : compact ? 170 : "auto" } }, /* @__PURE__ */ React.createElement("div", { style: {
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 10,
@@ -131,7 +165,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
     lineHeight: 1.7,
     animation: "inkFade 380ms var(--ease-out-quart) both",
     animationDelay: "180ms"
-  } }, "princeton \xB7 ece", /* @__PURE__ */ React.createElement("br", null), "ai systems \xB7 infra")), /* @__PURE__ */ React.createElement("nav", { style: {
+  } }, "princeton \xB7 ece", /* @__PURE__ */ React.createElement("br", null), "ai systems \xB7 infra")), /* @__PURE__ */ React.createElement("nav", { "aria-label": "Portfolio sections", style: {
     borderTop: compact ? "none" : `1px solid ${P.rule}`,
     paddingTop: compact ? 0 : 16,
     display: "flex",
@@ -148,6 +182,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
       "button",
       {
         key: n.id,
+        type: "button",
         onClick: () => setPage(n.id),
         "aria-current": active ? "page" : void 0,
         style: {
@@ -189,13 +224,14 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
       } }),
       /* @__PURE__ */ React.createElement("span", { style: { flex: 1 } }, n.label)
     );
-  })), (!compact || narrow) && /* @__PURE__ */ React.createElement("div", { style: {
-    marginTop: compact ? 4 : "auto",
-    paddingTop: 16,
+  })), /* @__PURE__ */ React.createElement("div", { style: {
+    marginTop: compact ? 0 : "auto",
+    paddingTop: compact ? 8 : 16,
     borderTop: `1px dashed ${P.rule}`,
     display: "flex",
     flexWrap: "wrap",
-    gap: 14,
+    gap: compact ? 8 : 6,
+    width: compact ? "100%" : "auto",
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 11,
     letterSpacing: 0.4,
@@ -211,7 +247,11 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
       style: {
         color: P.inkMute,
         textDecoration: "none",
-        transition: "color .2s var(--ease-out-quart)"
+        transition: "color .2s var(--ease-out-quart)",
+        display: "inline-flex",
+        alignItems: "center",
+        minHeight: 44,
+        padding: "0 4px"
       },
       onMouseEnter: (e) => {
         e.currentTarget.style.color = P.ink;
@@ -230,7 +270,8 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
   const { width } = window.useViewport();
   const compact = width < 1100;
   const narrow = width < 640;
-  return /* @__PURE__ */ React.createElement("div", { key: title }, /* @__PURE__ */ React.createElement("div", { style: {
+  const { animateEntrance } = React.useContext(window.MotionContext);
+  return /* @__PURE__ */ React.createElement("div", { key: title, className: `page-shell ${animateEntrance ? "page-shell--enter" : "page-shell--settled"}` }, /* @__PURE__ */ React.createElement("div", { style: {
     padding: compact ? "34px 24px 24px" : "60px 72px 32px",
     borderBottom: `1px solid ${P.rule}`,
     display: "grid",
@@ -254,7 +295,7 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
     animation: "inkFade 360ms var(--ease-out-quart) both",
     animationDelay: "60ms",
     viewTransitionName: "section-label"
-  } }, title.toUpperCase())), /* @__PURE__ */ React.createElement("h1", { style: {
+  } }, title.toUpperCase())), /* @__PURE__ */ React.createElement("h1", { id: `page-heading-${title}`, className: "page-heading", tabIndex: -1, "data-page-heading": true, style: {
     margin: 0,
     fontFamily: '"Fraunces", Georgia, serif',
     fontWeight: 400,
@@ -283,26 +324,32 @@ window.AboutPage = function AboutPage({ palette }) {
       palette: P,
       title: "about",
       accent,
-      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Electrical & Computer Engineering"), " at Princeton")
+      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Backend systems"), " and applied ML")
     },
     /* @__PURE__ */ React.createElement("div", { style: {
       display: "grid",
-      gridTemplateColumns: compact ? "1fr" : "minmax(0, 1fr) minmax(360px, 0.78fr)",
-      gap: compact ? 24 : 56,
+      gridTemplateColumns: compact ? "1fr" : "minmax(0, 1fr) minmax(390px, 0.82fr)",
+      gap: compact ? 32 : 64,
       maxWidth: 1080,
       alignItems: "start"
-    } }, /* @__PURE__ */ React.createElement("div", { style: {
-      fontFamily: "Inter, sans-serif",
-      fontSize: 18,
+    } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 650 } }, /* @__PURE__ */ React.createElement("p", { style: {
+      margin: 0,
+      fontSize: compact ? 18 : 20,
       lineHeight: 1.7,
       color: P.inkSoft,
-      textWrap: "pretty",
-      maxWidth: 660
-    } }, /* @__PURE__ */ React.createElement("p", { style: { marginTop: 0 } }, "Junior at Princeton exploring how LLM agents coordinate and fail on long-horizon tasks. Drawn to the systems work that turns agents into reliable products: agent infrastructure, inference, and the problems underneath")), /* @__PURE__ */ React.createElement("aside", { style: {
+      textWrap: "pretty"
+    } }, "I build data and AI systems that have to work under real constraints: distributed metadata APIs, authorization infrastructure, agent evaluation, and synthetic perception pipelines."), /* @__PURE__ */ React.createElement("p", { style: {
+      margin: "22px 0 0",
+      fontSize: 15,
+      lineHeight: 1.75,
+      color: P.inkMute,
+      maxWidth: 590,
+      textWrap: "pretty"
+    } }, "My work spans industry engineering at Databricks, Amazon, and BlueHalo, research in two Princeton labs, and software used by thousands of students.")), /* @__PURE__ */ React.createElement("aside", { style: {
+      width: "100%",
       background: P.paper,
       border: `1px solid ${P.rule}`,
-      padding: "26px 28px",
-      alignSelf: "start"
+      padding: "26px 28px"
     } }, /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 10,
@@ -312,12 +359,11 @@ window.AboutPage = function AboutPage({ palette }) {
     } }, "// CURRENT SNAPSHOT"), [
       ["school", "Princeton, 2027"],
       ["degree", "Electrical & Computer Eng."],
-      ["lane", "agents \xB7 ML systems"],
-      ["builds", "evals \xB7 agent infra \xB7 serving"],
+      ["focus", "distributed systems \xB7 applied ML"],
       ["industry", "Databricks \xB7 Amazon \xB7 BlueHalo"]
     ].map(([k, v], i) => /* @__PURE__ */ React.createElement("div", { key: k, style: {
       display: "grid",
-      gridTemplateColumns: "64px minmax(0, 1fr)",
+      gridTemplateColumns: "80px minmax(0, 1fr)",
       gap: 14,
       alignItems: "baseline",
       padding: "9px 0",
@@ -334,6 +380,7 @@ window.AboutPage = function AboutPage({ palette }) {
 window.ResearchPage = function ResearchPage({ palette }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.research];
+  const textAccent = window.ACCENT_TEXT[window.PAGE_ACCENT.research] || accent;
   const { width } = window.useViewport();
   const compact = width < 760;
   const labs = [
@@ -341,11 +388,11 @@ window.ResearchPage = function ResearchPage({ palette }) {
       id: "nlp",
       name: "Princeton NLP Lab",
       advisor: "Karthik R. Narasimhan",
-      role: "Senior Thesis",
-      period: "2025 to present",
-      topic: "Agentic Systems",
-      desc: "Studying how LLM agents coordinate, and fail, on long-horizon tasks",
-      tags: ["llm agents", "benchmarks", "memory", "evaluation"]
+      role: "Undergraduate Researcher",
+      period: "2026 to present",
+      topic: "Agent Evaluation & Coordination",
+      desc: "Evaluating long-horizon AI agents to characterize error compounding, context drift, and recovery failures",
+      tags: ["llm agents", "benchmarks", "context", "evaluation"]
     },
     {
       id: "pvl",
@@ -353,8 +400,8 @@ window.ResearchPage = function ResearchPage({ palette }) {
       advisor: "Jia Deng",
       role: "Undergraduate Researcher",
       period: "2024 to present",
-      topic: "Computer Vision, SLAM & Segmentation",
-      desc: "Research engineering for 3D scene understanding with sim-to-real data, point clouds, and spatial models",
+      topic: "3D Perception & Synthetic Data",
+      desc: "Added material-aware LiDAR simulation with pose and semantic ground truth to Infinigen, contributing to an 8.4% reduction in learned SLAM localization error through procedural pretraining",
       tags: ["3d vision", "lidar", "slam", "point clouds"]
     }
   ];
@@ -364,23 +411,21 @@ window.ResearchPage = function ResearchPage({ palette }) {
       palette: P,
       title: "research",
       accent,
-      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Agentic systems"), " and perception")
+      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Agent evaluation"), " and 3D perception")
     },
     /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 0, maxWidth: 1e3 } }, labs.map((lab, i) => /* @__PURE__ */ React.createElement("article", { key: lab.id, style: {
       display: "grid",
       gridTemplateColumns: compact ? "1fr" : "160px 1fr",
       gap: compact ? 18 : 48,
-      padding: compact ? "28px 22px" : "34px 36px",
-      background: P.paper,
-      border: `1px solid ${P.rule}`,
-      marginBottom: 18,
+      padding: compact ? "28px 0" : "34px 0",
+      borderTop: i === 0 ? "none" : `1px solid ${P.rule}`,
       animation: "inkFade 460ms var(--ease-out-quart) both",
       animationDelay: `${320 + i * 90}ms`
     } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", paddingTop: 4 } }, /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 11,
       letterSpacing: 1,
-      color: accent,
+      color: textAccent,
       marginBottom: 8
     } }, lab.period), /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"Fraunces", serif',
@@ -407,7 +452,7 @@ window.ResearchPage = function ResearchPage({ palette }) {
       color: P.inkMute,
       letterSpacing: 0.6,
       marginBottom: 14
-    } }, "ADVISED BY ", /* @__PURE__ */ React.createElement("span", { style: { color: P.ink } }, lab.advisor), /* @__PURE__ */ React.createElement("span", { style: { margin: "0 10px", color: P.inkMute } }, "\xB7"), "TOPIC ", /* @__PURE__ */ React.createElement("span", { style: { color: accent } }, lab.topic.toUpperCase())), /* @__PURE__ */ React.createElement("p", { style: {
+    } }, "ADVISED BY ", /* @__PURE__ */ React.createElement("span", { style: { color: P.ink } }, lab.advisor), /* @__PURE__ */ React.createElement("span", { style: { margin: "0 10px", color: P.inkMute } }, "\xB7"), "TOPIC ", /* @__PURE__ */ React.createElement("span", { style: { color: textAccent } }, lab.topic.toUpperCase())), /* @__PURE__ */ React.createElement("p", { style: {
       margin: 0,
       fontSize: 16,
       lineHeight: 1.75,
@@ -430,6 +475,7 @@ window.ResearchPage = function ResearchPage({ palette }) {
 window.WorkPage = function WorkPage({ palette }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.work];
+  const textAccent = window.ACCENT_TEXT[window.PAGE_ACCENT.work] || accent;
   const { width } = window.useViewport();
   const compact = width < 760;
   const jobs = [
@@ -437,11 +483,11 @@ window.WorkPage = function WorkPage({ palette }) {
       co: "Databricks",
       role: "Software Engineer Intern",
       team: "Unity Catalog",
-      loc: "Seattle, WA",
+      loc: "Bellevue, WA",
       period: "May 2026 to Aug 2026",
-      tag: "incoming",
-      desc: "Incoming on Unity Catalog, the governance and access-control layer for data and AI at lake scale",
-      stack: ["scala", "spark", "catalog", "distributed systems"]
+      tag: "completed",
+      desc: "Redesigned a resumable metadata API that resolved 479 daily timeouts across 34 workspaces and cut p95 latency by 79% for requests spanning 1,500+ tables",
+      stack: ["scala", "unity catalog", "apis", "distributed systems"]
     },
     {
       co: "Amazon",
@@ -449,17 +495,19 @@ window.WorkPage = function WorkPage({ palette }) {
       team: "Identity & Access Management",
       loc: "Seattle, WA",
       period: "May 2025 to Aug 2025",
-      desc: "Worked on AWS IAM, the identity and policy engine that brokers access for AWS API calls at cloud scale",
-      stack: ["java", "aws", "authz", "distributed services"]
+      tag: "completed",
+      desc: "Consolidated DynamoDB checks in Amazon Verified Permissions to cut p99 account-access latency by 32%, then provisioned tenant-isolated authorization infrastructure for 1M+ accounts",
+      stack: ["java", "dynamodb", "aws cdk", "authorization"]
     },
     {
       co: "BlueHalo",
       role: "Software Engineer Intern",
-      team: "ML Inference Systems",
-      loc: "Remote",
+      team: "Data Platforms",
+      loc: "Baltimore, MD",
       period: "May 2024 to Aug 2024",
-      desc: "Built inference infrastructure for production computer vision models, optimizing throughput and latency for real-time deployment",
-      stack: ["python", "pytorch", "triton", "cv"]
+      tag: "completed",
+      desc: "Migrated ETL pipelines to Spark on EMR with Airflow, reducing dataset onboarding time by 25% while processing more than 5M records per run",
+      stack: ["python", "spark", "emr", "airflow"]
     }
   ];
   return /* @__PURE__ */ React.createElement(
@@ -468,23 +516,28 @@ window.WorkPage = function WorkPage({ palette }) {
       palette: P,
       title: "work",
       accent,
-      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Infrastructure"), " for AI systems")
+      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "Systems"), " that hold up at scale")
     },
-    /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1040, position: "relative" } }, jobs.map((j, i) => /* @__PURE__ */ React.createElement("article", { key: j.co, style: {
+    /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1040, position: "relative" } }, !compact && /* @__PURE__ */ React.createElement("div", { style: {
+      position: "absolute",
+      left: 180,
+      top: 0,
+      bottom: 0,
+      width: 1,
+      background: P.rule
+    } }), jobs.map((j, i) => /* @__PURE__ */ React.createElement("article", { key: j.co, style: {
       position: "relative",
       display: "grid",
       gridTemplateColumns: compact ? "1fr" : "160px 40px 1fr",
       gap: compact ? 14 : 0,
-      padding: compact ? "28px 22px" : "34px 36px",
-      background: P.paper,
-      border: `1px solid ${P.rule}`,
-      marginBottom: 18,
+      padding: compact ? "28px 0" : "34px 0",
+      borderBottom: i === jobs.length - 1 ? "none" : `1px dashed ${P.rule}`,
       animation: "inkFade 460ms var(--ease-out-quart) both",
       animationDelay: `${320 + i * 90}ms`
     } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 11,
-      color: accent,
+      color: textAccent,
       letterSpacing: 0.8,
       marginBottom: 6
     } }, j.period.split(" to ")[0]), /* @__PURE__ */ React.createElement("div", { style: {
@@ -499,7 +552,7 @@ window.WorkPage = function WorkPage({ palette }) {
       fontSize: 9,
       padding: "3px 8px",
       border: `1px solid ${accent}`,
-      color: accent,
+      color: textAccent,
       letterSpacing: 1
     } }, j.tag.toUpperCase())), !compact && /* @__PURE__ */ React.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ React.createElement("div", { style: {
       position: "absolute",
@@ -508,7 +561,7 @@ window.WorkPage = function WorkPage({ palette }) {
       width: 14,
       height: 14,
       borderRadius: "50%",
-      background: P.paper,
+      background: P.bg,
       border: `2px solid ${accent}`,
       boxShadow: `0 0 0 5px ${accent.replace(")", " / 0.12)")}`
     } })), /* @__PURE__ */ React.createElement("div", { style: { paddingLeft: compact ? 0 : 24 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("h2", { style: {
@@ -522,7 +575,7 @@ window.WorkPage = function WorkPage({ palette }) {
       fontFamily: '"Fraunces", serif',
       fontStyle: "italic",
       fontSize: 19,
-      color: accent
+      color: textAccent
     } }, "\xB7 ", j.team)), /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 11,
@@ -552,42 +605,63 @@ window.WorkPage = function WorkPage({ palette }) {
 window.ProjectsPage = function ProjectsPage({ palette }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.projects];
+  const textAccent = window.ACCENT_TEXT[window.PAGE_ACCENT.projects] || accent;
   const { width } = window.useViewport();
   const compact = width < 900;
-  const contactLinks = window.CONTACT_LINKS;
+  const contactLinks = Object.entries(window.CONTACT_LINKS).filter(([label]) => label !== "resume");
   const projects = [
     {
-      name: "Inter-Agent Alignment",
-      tagline: "Wisdom of the crowds, applied at inference time",
-      desc: "NLP research on aligning LLM agents through aggregation. Treating wisdom of the crowds as the inference algorithm: many sampled rollouts combined into a single decision rather than trusting any one agent in isolation",
-      stack: ["python", "llm agents", "inference"],
-      status: "research",
-      proof: "NLP research"
+      name: "TigerJunction",
+      tagline: "Course planning for 3,000+ Princeton students",
+      desc: "Built backend services for course search and scheduling, including sub-200 ms p95 search across more than 1,500 course offerings with Redis caching and invalidation",
+      stack: ["typescript", "postgresql", "aws lambda", "redis"],
+      status: "public",
+      statusLabel: "production software",
+      proof: "TigerApps public repository",
+      href: "https://github.com/TigerAppsOrg/tiger-junction",
+      linkLabel: "repository"
+    },
+    {
+      name: "MineBench model integration",
+      tagline: "Production model support for a spatial AI benchmark",
+      desc: "Added Muse Spark 1.2 across provider registration, structured-output handling, request tests, and model configuration in a merged 580-line open-source change",
+      stack: ["typescript", "model apis", "testing", "open source"],
+      status: "public",
+      statusLabel: "merged contribution",
+      proof: "MineBench pull request #77",
+      href: "https://github.com/Ammaar-Alam/minebench/pull/77",
+      linkLabel: "merged PR"
     },
     {
       name: "HELMET long-context evals",
-      tagline: "Retrieval was not the whole story.",
-      desc: "Experiment work around HELMET and long-context reasoning. The useful diagnosis was that retrieval could stay strong while answer quality still dropped, pointing to answer-time dilution and locality issues.",
+      tagline: "Long-context evaluation beyond retrieval",
+      desc: "Local experiments using the open-source HELMET benchmark to compare retrieval strength with answer quality, including cases where answer quality dropped despite strong retrieval",
       stack: ["python", "llm evals", "analysis"],
       status: "public",
-      proof: "Public repo",
-      href: "https://github.com/erik-d123/HELMET"
+      statusLabel: "public experiment",
+      proof: "Public HELMET fork",
+      href: "https://github.com/erik-d123/HELMET",
+      linkLabel: "repository"
     },
     {
       name: "Synthetic LiDAR Point Clouds",
-      tagline: "From simulator to spatial perception",
-      desc: "Research engineering for indoor 3D perception: synthetic scene generation, LiDAR and odometry pipelines, and Pointcept-compatible point clouds for downstream spatial models trained on simulated data",
+      tagline: "Synthetic data for indoor 3D perception",
+      desc: "PVL research pipeline spanning synthetic scene generation, LiDAR simulation, odometry outputs, and Pointcept-compatible point clouds",
       stack: ["python", "point clouds", "slam"],
       status: "research",
-      proof: "PVL research"
+      statusLabel: "ongoing research",
+      proof: "Princeton Vision & Learning Lab research"
     },
     {
       name: "CityLearn hybrid RL",
-      tagline: "Residual RL around an expert controller.",
-      desc: "Final-project system for CityLearn energy management. Built a hybrid expert plus residual PPO approach, then audited leaderboard claims, seed aggregation, and released-evaluation consistency.",
+      tagline: "Residual reinforcement learning for energy control",
+      desc: "COS435 final project for CityLearn energy management: a hybrid expert controller with residual PPO, evaluated with attention to seeds, aggregation, and released-evaluation consistency",
       stack: ["python", "ppo", "citylearn"],
       status: "course",
-      proof: "COS435 final project"
+      statusLabel: "course project",
+      proof: "COS435 final project",
+      href: "https://github.com/Ammaar-Alam/cos435-citylearn",
+      linkLabel: "repository"
     }
   ];
   return /* @__PURE__ */ React.createElement(
@@ -596,7 +670,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
       palette: P,
       title: "projects",
       accent,
-      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, "Agents, perception, and ", /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "ML systems"))
+      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, "Public work, research, and ", /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "systems"))
     },
     /* @__PURE__ */ React.createElement("div", { style: {
       display: "grid",
@@ -604,7 +678,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
       gap: 20,
       maxWidth: 1040
     } }, projects.map((p, i) => {
-      const statusAccent = A[window.STATUS_ACCENT[p.status]] || accent;
+      const statusAccent = window.ACCENT_TEXT[window.STATUS_ACCENT[p.status]] || textAccent;
       return /* @__PURE__ */ React.createElement(
         "article",
         {
@@ -614,17 +688,15 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
             border: `1px solid ${P.rule}`,
             padding: "28px 30px 26px",
             position: "relative",
-            transition: "border-color .2s var(--ease-out-quart), transform .25s var(--ease-out-quart)",
+            transition: "border-color .2s var(--ease-out-quart)",
             animation: "inkFade 460ms var(--ease-out-quart) both",
             animationDelay: `${320 + i * 70}ms`
           },
           onMouseEnter: (e) => {
             e.currentTarget.style.borderColor = accent;
-            e.currentTarget.style.transform = "translateY(-2px)";
           },
           onMouseLeave: (e) => {
             e.currentTarget.style.borderColor = P.rule;
-            e.currentTarget.style.transform = "translateY(0)";
           }
         },
         /* @__PURE__ */ React.createElement("div", { style: {
@@ -633,7 +705,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           letterSpacing: 1.4,
           color: statusAccent,
           marginBottom: 14
-        } }, p.status.toUpperCase()),
+        } }, p.statusLabel.toUpperCase()),
         /* @__PURE__ */ React.createElement("h2", { style: {
           margin: 0,
           fontFamily: '"Fraunces", serif',
@@ -647,7 +719,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           fontFamily: '"Fraunces", serif',
           fontStyle: "italic",
           fontSize: 16,
-          color: accent,
+          color: textAccent,
           letterSpacing: -0.2
         } }, p.tagline),
         /* @__PURE__ */ React.createElement("p", { style: {
@@ -662,16 +734,28 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           fontFamily: '"JetBrains Mono", monospace',
           fontSize: 10,
           color: P.inkMute,
-          letterSpacing: 0.5
-        } }, p.proof, p.href && /* @__PURE__ */ React.createElement(
+          letterSpacing: 0.5,
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 8
+        } }, /* @__PURE__ */ React.createElement("span", null, p.proof), p.href && /* @__PURE__ */ React.createElement(
           "a",
           {
             href: p.href,
             target: "_blank",
             rel: "noopener noreferrer",
-            style: { color: accent, marginLeft: 12, textDecoration: "underline" }
+            style: {
+              color: textAccent,
+              textDecoration: "underline",
+              display: "inline-flex",
+              alignItems: "center",
+              minHeight: 44,
+              padding: "0 4px"
+            }
           },
-          "open \u2197"
+          p.linkLabel || "open",
+          " \u2197"
         )),
         /* @__PURE__ */ React.createElement("div", { style: {
           marginTop: 22,
@@ -714,7 +798,7 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
       color: P.ink,
       maxWidth: 620,
       lineHeight: 1.15
-    } }, "Say hi")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, Object.entries(contactLinks).map(([x, href]) => /* @__PURE__ */ React.createElement(
+    } }, "Say hi")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, contactLinks.map(([x, href]) => /* @__PURE__ */ React.createElement(
       "a",
       {
         key: x,
@@ -724,6 +808,9 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
         style: {
           padding: "10px 18px",
           border: `1px solid ${P.ink}`,
+          minHeight: 44,
+          display: "inline-flex",
+          alignItems: "center",
           fontFamily: "Inter, sans-serif",
           fontSize: 13,
           fontWeight: 500,
@@ -776,10 +863,10 @@ window.TIMELINE_EVENTS = [
     id: "databricks26",
     year: 2026,
     month: "Jun",
-    title: "Databricks \xB7 SWE (incoming)",
+    title: "Databricks \xB7 SWE intern",
     city: "seattle",
     category: "work",
-    body: "Returning to Seattle for the summer on the Unity Catalog team",
+    body: "Summer 2026 in Seattle on the Unity Catalog team",
     links: [{ label: "Unity Catalog", href: "https://www.databricks.com/product/unity-catalog" }]
   },
   {
@@ -1413,20 +1500,29 @@ const DEFAULTS = { palette: "cream", accent: "coral" };
 function App() {
   const normalizePage = (id) => id === "timeline" && !window.FEATURE_FLAGS.timeline ? "about" : id;
   const [page, setRawPage] = React.useState(() => normalizePage(localStorage.getItem("ed_page") || "about"));
+  const [hasNavigated, setHasNavigated] = React.useState(false);
+  const reducedMotion = window.useReducedMotion();
+  const mainRef = React.useRef(null);
+  const previousPageRef = React.useRef(page);
+  const tweaksToggleRef = React.useRef(null);
+  const supportsViewTransition = Boolean(!reducedMotion && document.startViewTransition);
   const setPage = (id) => {
     const next = normalizePage(id);
     if (next === page) return;
-    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduce && document.startViewTransition) {
+    const commitPage = () => {
+      setRawPage(next);
+      setHasNavigated(true);
+    };
+    if (supportsViewTransition) {
       document.startViewTransition(() => {
         if (window.ReactDOM && window.ReactDOM.flushSync) {
-          window.ReactDOM.flushSync(() => setRawPage(next));
+          window.ReactDOM.flushSync(commitPage);
         } else {
-          setRawPage(next);
+          commitPage();
         }
       });
     } else {
-      setRawPage(next);
+      commitPage();
     }
   };
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem("ed_palette") || DEFAULTS.palette);
@@ -1444,6 +1540,29 @@ function App() {
   const palette = window.PALETTES[paletteKey] || window.PALETTES.cream;
   const viewport = window.useViewport();
   const compact = viewport.width < 1100;
+  React.useEffect(() => {
+    if (previousPageRef.current === page) return void 0;
+    previousPageRef.current = page;
+    const main = mainRef.current;
+    if (!main) return void 0;
+    main.scrollTop = 0;
+    const heading = main.querySelector("[data-page-heading]");
+    const frame = requestAnimationFrame(() => {
+      if (heading) heading.focus({ preventScroll: true });
+      if (compact) main.scrollIntoView({ block: "start" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [page, compact]);
+  React.useEffect(() => {
+    if (!tweaksOpen) return void 0;
+    const onKeyDown = (event) => {
+      if (event.key !== "Escape") return;
+      setTweaksOpen(false);
+      requestAnimationFrame(() => tweaksToggleRef.current?.focus());
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [tweaksOpen]);
   const PageComp = {
     about: window.AboutPage,
     research: window.ResearchPage,
@@ -1451,14 +1570,17 @@ function App() {
     projects: window.ProjectsPage,
     timeline: window.TimelinePage
   }[page];
-  return /* @__PURE__ */ React.createElement("div", { style: {
+  return /* @__PURE__ */ React.createElement(window.MotionContext.Provider, { value: {
+    animateEntrance: !hasNavigated || !supportsViewTransition,
+    reducedMotion
+  } }, /* @__PURE__ */ React.createElement("div", { className: "portfolio-app", style: {
     display: "flex",
     minHeight: "100vh",
     background: palette.bg,
     color: palette.ink,
     fontFamily: "Inter, system-ui, sans-serif",
     flexDirection: compact ? "column" : "row"
-  } }, /* @__PURE__ */ React.createElement(
+  } }, /* @__PURE__ */ React.createElement("a", { className: "skip-link", href: "#main-content" }, "Skip to main content"), /* @__PURE__ */ React.createElement(
     window.Sidebar,
     {
       page,
@@ -1467,31 +1589,53 @@ function App() {
       accentKey,
       compact
     }
-  ), /* @__PURE__ */ React.createElement("main", { className: "app-scroll", style: {
-    flex: 1,
-    minWidth: 0,
-    background: palette.bg,
-    overflowY: "auto",
-    height: compact ? "auto" : "100vh"
-  } }, /* @__PURE__ */ React.createElement(PageComp, { palette, setPage })), /* @__PURE__ */ React.createElement(TweaksToggle, { open: tweaksOpen, onToggle: () => setTweaksOpen((o) => !o), palette }), tweaksOpen && /* @__PURE__ */ React.createElement(
+  ), /* @__PURE__ */ React.createElement(
+    "main",
+    {
+      ref: mainRef,
+      id: "main-content",
+      tabIndex: -1,
+      "aria-labelledby": `page-heading-${page}`,
+      className: "app-scroll",
+      style: {
+        flex: 1,
+        minWidth: 0,
+        background: palette.bg,
+        overflowY: "auto",
+        height: compact ? "auto" : "100vh"
+      }
+    },
+    /* @__PURE__ */ React.createElement(PageComp, { palette, setPage })
+  ), /* @__PURE__ */ React.createElement(
+    TweaksToggle,
+    {
+      buttonRef: tweaksToggleRef,
+      open: tweaksOpen,
+      onToggle: () => setTweaksOpen((o) => !o),
+      palette
+    }
+  ), tweaksOpen && /* @__PURE__ */ React.createElement(
     TweaksPanel,
     {
       palette,
       paletteKey,
       accentKey,
       onPalette: setPaletteKey,
-      onAccent: setAccentKey,
-      onClose: () => setTweaksOpen(false)
+      onAccent: setAccentKey
     }
-  ));
+  )));
 }
-function TweaksToggle({ open, onToggle, palette }) {
+function TweaksToggle({ buttonRef, open, onToggle, palette }) {
   const P = palette;
   return /* @__PURE__ */ React.createElement(
     "button",
     {
+      ref: buttonRef,
+      type: "button",
       onClick: onToggle,
-      "aria-label": open ? "Close tweaks" : "Open tweaks",
+      "aria-label": open ? "Close display tweaks" : "Open display tweaks",
+      "aria-expanded": open,
+      "aria-controls": "display-tweaks",
       style: {
         position: "fixed",
         bottom: 20,
@@ -1526,7 +1670,7 @@ function TweaksToggle({ open, onToggle, palette }) {
 }
 function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
   const P = palette, A = window.ACCENTS;
-  return /* @__PURE__ */ React.createElement("div", { style: {
+  return /* @__PURE__ */ React.createElement("div", { id: "display-tweaks", role: "region", "aria-label": "Display tweaks", style: {
     position: "fixed",
     bottom: 76,
     right: 20,
@@ -1553,20 +1697,32 @@ function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
   } }, "Paper"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 18 } }, Object.keys(window.PALETTES).map((k) => {
     const p = window.PALETTES[k];
     const active = paletteKey === k;
-    return /* @__PURE__ */ React.createElement("button", { key: k, onClick: () => onPalette(k), style: {
-      flex: 1,
-      padding: "10px 8px",
-      cursor: "pointer",
-      background: p.bg,
-      border: `1px solid ${active ? P.ink : P.rule}`,
-      borderRadius: 0,
-      textAlign: "left",
-      fontFamily: "Inter, sans-serif",
-      fontSize: 11,
-      color: p.ink,
-      letterSpacing: 0.2,
-      boxShadow: active ? `inset 0 0 0 1px ${P.ink}` : "none"
-    } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 500 } }, k), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: p.inkMute, marginTop: 2, fontFamily: '"JetBrains Mono", monospace' } }, k === "cream" ? "warm" : "cool"));
+    return /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        key: k,
+        type: "button",
+        "aria-pressed": active,
+        onClick: () => onPalette(k),
+        style: {
+          flex: 1,
+          padding: "10px 8px",
+          cursor: "pointer",
+          minHeight: 44,
+          background: p.bg,
+          border: `1px solid ${active ? P.ink : P.rule}`,
+          borderRadius: 0,
+          textAlign: "left",
+          fontFamily: "Inter, sans-serif",
+          fontSize: 11,
+          color: p.ink,
+          letterSpacing: 0.2,
+          boxShadow: active ? `inset 0 0 0 1px ${P.ink}` : "none"
+        }
+      },
+      /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 500 } }, k),
+      /* @__PURE__ */ React.createElement("div", { style: { fontSize: 9, color: p.inkMute, marginTop: 2, fontFamily: '"JetBrains Mono", monospace' } }, k === "cream" ? "warm" : "cool")
+    );
   })), /* @__PURE__ */ React.createElement("div", { style: {
     fontFamily: '"Fraunces", serif',
     fontSize: 13,
@@ -1575,26 +1731,39 @@ function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
     letterSpacing: -0.1
   } }, "Signal accent"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6 } }, Object.entries(A).map(([k, v]) => {
     const active = accentKey === k;
-    return /* @__PURE__ */ React.createElement("button", { key: k, onClick: () => onAccent(k), style: {
-      flex: 1,
-      padding: "8px 6px",
-      cursor: "pointer",
-      background: P.bg,
-      border: `1px solid ${active ? v : P.rule}`,
-      borderRadius: 0,
-      textAlign: "center",
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: 10,
-      color: active ? v : P.inkSoft,
-      letterSpacing: 0.3
-    } }, /* @__PURE__ */ React.createElement("div", { style: {
-      width: 14,
-      height: 14,
-      background: v,
-      borderRadius: "50%",
-      margin: "2px auto 6px",
-      boxShadow: active ? `0 0 0 3px ${v.replace(")", " / 0.22)")}` : "none"
-    } }), k);
+    const textColor = window.ACCENT_TEXT[k] || v;
+    return /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        key: k,
+        type: "button",
+        "aria-pressed": active,
+        onClick: () => onAccent(k),
+        style: {
+          flex: 1,
+          padding: "8px 6px",
+          cursor: "pointer",
+          minHeight: 44,
+          background: P.bg,
+          border: `1px solid ${active ? v : P.rule}`,
+          borderRadius: 0,
+          textAlign: "center",
+          fontFamily: '"JetBrains Mono", monospace',
+          fontSize: 10,
+          color: active ? textColor : P.inkSoft,
+          letterSpacing: 0.3
+        }
+      },
+      /* @__PURE__ */ React.createElement("div", { "aria-hidden": "true", style: {
+        width: 14,
+        height: 14,
+        background: v,
+        borderRadius: "50%",
+        margin: "2px auto 6px",
+        boxShadow: active ? `0 0 0 3px ${v.replace(")", " / 0.22)")}` : "none"
+      } }),
+      k
+    );
   })), /* @__PURE__ */ React.createElement("div", { style: {
     marginTop: 14,
     paddingTop: 10,

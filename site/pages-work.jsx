@@ -3,6 +3,7 @@
 window.WorkPage = function WorkPage({ palette }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.work];
+  const textAccent = window.ACCENT_TEXT[window.PAGE_ACCENT.work] || accent;
   const { width } = window.useViewport();
   const compact = width < 760;
 
@@ -11,11 +12,11 @@ window.WorkPage = function WorkPage({ palette }) {
       co: 'Databricks',
       role: 'Software Engineer Intern',
       team: 'Unity Catalog',
-      loc: 'Seattle, WA',
+      loc: 'Bellevue, WA',
       period: 'May 2026 to Aug 2026',
-      tag: 'incoming',
-      desc: 'Incoming on Unity Catalog, the governance and access-control layer for data and AI at lake scale',
-      stack: ['scala', 'spark', 'catalog', 'distributed systems'],
+      tag: 'completed',
+      desc: 'Redesigned a resumable metadata API that resolved 479 daily timeouts across 34 workspaces and cut p95 latency by 79% for requests spanning 1,500+ tables',
+      stack: ['scala', 'unity catalog', 'apis', 'distributed systems'],
     },
     {
       co: 'Amazon',
@@ -23,41 +24,46 @@ window.WorkPage = function WorkPage({ palette }) {
       team: 'Identity & Access Management',
       loc: 'Seattle, WA',
       period: 'May 2025 to Aug 2025',
-      desc: 'Worked on AWS IAM, the identity and policy engine that brokers access for AWS API calls at cloud scale',
-      stack: ['java', 'aws', 'authz', 'distributed services'],
+      tag: 'completed',
+      desc: 'Consolidated DynamoDB checks in Amazon Verified Permissions to cut p99 account-access latency by 32%, then provisioned tenant-isolated authorization infrastructure for 1M+ accounts',
+      stack: ['java', 'dynamodb', 'aws cdk', 'authorization'],
     },
     {
       co: 'BlueHalo',
       role: 'Software Engineer Intern',
-      team: 'ML Inference Systems',
-      loc: 'Remote',
+      team: 'Data Platforms',
+      loc: 'Baltimore, MD',
       period: 'May 2024 to Aug 2024',
-      desc: 'Built inference infrastructure for production computer vision models, optimizing throughput and latency for real-time deployment',
-      stack: ['python', 'pytorch', 'triton', 'cv'],
+      tag: 'completed',
+      desc: 'Migrated ETL pipelines to Spark on EMR with Airflow, reducing dataset onboarding time by 25% while processing more than 5M records per run',
+      stack: ['python', 'spark', 'emr', 'airflow'],
     },
   ];
 
   return (
     <window.PageShell palette={P}
       title="work" accent={accent}
-      subtitle={<><em style={{ color: accent }}>Infrastructure</em> for AI systems</>}
+      subtitle={<><em style={{ color: accent }}>Systems</em> that hold up at scale</>}
     >
       <div style={{ maxWidth: 1040, position: 'relative' }}>
+        {!compact && <div style={{
+          position: 'absolute', left: 180, top: 0, bottom: 0, width: 1,
+          background: P.rule,
+        }} />}
         {jobs.map((j, i) => (
           <article key={j.co} style={{
             position: 'relative', display: 'grid',
             gridTemplateColumns: compact ? '1fr' : '160px 40px 1fr',
             gap: compact ? 14 : 0,
-            padding: compact ? '28px 22px' : '34px 36px',
-            background: P.paper, border: `1px solid ${P.rule}`,
-            marginBottom: 18,
+            padding: compact ? '28px 0' : '34px 0',
+            borderBottom: i === jobs.length - 1 ? 'none' : `1px dashed ${P.rule}`,
             animation: 'inkFade 460ms var(--ease-out-quart) both',
             animationDelay: `${320 + i * 90}ms`,
           }}>
             <div>
               <div style={{
                 fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
-                color: accent, letterSpacing: 0.8, marginBottom: 6,
+                color: textAccent, letterSpacing: 0.8, marginBottom: 6,
               }}>{j.period.split(' to ')[0]}</div>
               <div style={{
                 fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
@@ -68,7 +74,7 @@ window.WorkPage = function WorkPage({ palette }) {
                   display: 'inline-block', marginTop: 10,
                   fontFamily: '"JetBrains Mono", monospace', fontSize: 9,
                   padding: '3px 8px', border: `1px solid ${accent}`,
-                  color: accent, letterSpacing: 1,
+                  color: textAccent, letterSpacing: 1,
                 }}>{j.tag.toUpperCase()}</div>
               )}
             </div>
@@ -76,7 +82,7 @@ window.WorkPage = function WorkPage({ palette }) {
               <div style={{
                 position: 'absolute', left: 16, top: 6,
                 width: 14, height: 14, borderRadius: '50%',
-                background: P.paper, border: `2px solid ${accent}`,
+                background: P.bg, border: `2px solid ${accent}`,
                 boxShadow: `0 0 0 5px ${accent.replace(')', ' / 0.12)')}`,
               }} />
             </div>}
@@ -88,7 +94,7 @@ window.WorkPage = function WorkPage({ palette }) {
                 }}>{j.co}</h2>
                 <span style={{
                   fontFamily: '"Fraunces", serif', fontStyle: 'italic',
-                  fontSize: 19, color: accent,
+                  fontSize: 19, color: textAccent,
                 }}>· {j.team}</span>
               </div>
               <div style={{

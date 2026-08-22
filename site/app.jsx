@@ -7,20 +7,29 @@ function App() {
     id === 'timeline' && !window.FEATURE_FLAGS.timeline ? 'about' : id
   );
   const [page, setRawPage]          = React.useState(() => normalizePage(localStorage.getItem('ed_page') || 'about'));
+  const [hasNavigated, setHasNavigated] = React.useState(false);
+  const reducedMotion = window.useReducedMotion();
+  const mainRef = React.useRef(null);
+  const previousPageRef = React.useRef(page);
+  const tweaksToggleRef = React.useRef(null);
+  const supportsViewTransition = Boolean(!reducedMotion && document.startViewTransition);
   const setPage = (id) => {
     const next = normalizePage(id);
     if (next === page) return;
-    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!reduce && document.startViewTransition) {
+    const commitPage = () => {
+      setRawPage(next);
+      setHasNavigated(true);
+    };
+    if (supportsViewTransition) {
       document.startViewTransition(() => {
         if (window.ReactDOM && window.ReactDOM.flushSync) {
-          window.ReactDOM.flushSync(() => setRawPage(next));
+          window.ReactDOM.flushSync(commitPage);
         } else {
-          setRawPage(next);
+          commitPage();
         }
       });
     } else {
-      setRawPage(next);
+      commitPage();
     }
   };
   const [paletteKey, setPaletteKey] = React.useState(() => localStorage.getItem('ed_palette') || DEFAULTS.palette);
@@ -34,6 +43,31 @@ function App() {
   const viewport = window.useViewport();
   const compact = viewport.width < 1100;
 
+  React.useEffect(() => {
+    if (previousPageRef.current === page) return undefined;
+    previousPageRef.current = page;
+    const main = mainRef.current;
+    if (!main) return undefined;
+    main.scrollTop = 0;
+    const heading = main.querySelector('[data-page-heading]');
+    const frame = requestAnimationFrame(() => {
+      if (heading) heading.focus({ preventScroll: true });
+      if (compact) main.scrollIntoView({ block: 'start' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [page, compact]);
+
+  React.useEffect(() => {
+    if (!tweaksOpen) return undefined;
+    const onKeyDown = (event) => {
+      if (event.key !== 'Escape') return;
+      setTweaksOpen(false);
+      requestAnimationFrame(() => tweaksToggleRef.current?.focus());
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [tweaksOpen]);
+
   const PageComp = {
     about:    window.AboutPage,
     research: window.ResearchPage,
@@ -43,22 +77,31 @@ function App() {
   }[page];
 
   return (
-    <div style={{
+    <window.MotionContext.Provider value={{
+      animateEntrance: !hasNavigated || !supportsViewTransition,
+      reducedMotion,
+    }}>
+    <div className="portfolio-app" style={{
       display: 'flex', minHeight: '100vh', background: palette.bg,
       color: palette.ink, fontFamily: 'Inter, system-ui, sans-serif',
       flexDirection: compact ? 'column' : 'row',
     }}>
+      <a className="skip-link" href="#main-content">Skip to main content</a>
+
       <window.Sidebar page={page} setPage={setPage}
         palette={palette} accentKey={accentKey} compact={compact} />
 
-      <main className="app-scroll" style={{
+      <main ref={mainRef} id="main-content" tabIndex={-1}
+        aria-labelledby={`page-heading-${page}`}
+        className="app-scroll" style={{
         flex: 1, minWidth: 0, background: palette.bg,
         overflowY: 'auto', height: compact ? 'auto' : '100vh',
       }}>
         <PageComp palette={palette} setPage={setPage} />
       </main>
 
-      <TweaksToggle open={tweaksOpen} onToggle={() => setTweaksOpen(o => !o)} palette={palette} />
+      <TweaksToggle buttonRef={tweaksToggleRef} open={tweaksOpen}
+        onToggle={() => setTweaksOpen(o => !o)} palette={palette} />
 
       {tweaksOpen && (
         <TweaksPanel
@@ -67,17 +110,19 @@ function App() {
           accentKey={accentKey}
           onPalette={setPaletteKey}
           onAccent={setAccentKey}
-          onClose={() => setTweaksOpen(false)}
         />
       )}
     </div>
+    </window.MotionContext.Provider>
   );
 }
 
-function TweaksToggle({ open, onToggle, palette }) {
+function TweaksToggle({ buttonRef, open, onToggle, palette }) {
   const P = palette;
   return (
-    <button onClick={onToggle} aria-label={open ? 'Close tweaks' : 'Open tweaks'}
+    <button ref={buttonRef} type="button" onClick={onToggle}
+      aria-label={open ? 'Close display tweaks' : 'Open display tweaks'}
+      aria-expanded={open} aria-controls="display-tweaks"
       style={{
         position: 'fixed', bottom: 20, right: 20, zIndex: 101,
         width: 44, height: 44, borderRadius: '50%',
@@ -101,7 +146,7 @@ function TweaksToggle({ open, onToggle, palette }) {
 function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
   const P = palette, A = window.ACCENTS;
   return (
-    <div style={{
+    <div id="display-tweaks" role="region" aria-label="Display tweaks" style={{
       position: 'fixed', bottom: 76, right: 20, width: 280,
       background: P.paper, border: `1px solid ${P.rule}`,
       boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
@@ -122,8 +167,10 @@ function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
           const p = window.PALETTES[k];
           const active = paletteKey === k;
           return (
-            <button key={k} onClick={() => onPalette(k)} style={{
+            <button key={k} type="button" aria-pressed={active}
+              onClick={() => onPalette(k)} style={{
               flex: 1, padding: '10px 8px', cursor: 'pointer',
+              minHeight: 44,
               background: p.bg, border: `1px solid ${active ? P.ink : P.rule}`,
               borderRadius: 0, textAlign: 'left',
               fontFamily: 'Inter, sans-serif', fontSize: 11,
@@ -146,15 +193,18 @@ function TweaksPanel({ palette, paletteKey, accentKey, onPalette, onAccent }) {
       <div style={{ display: 'flex', gap: 6 }}>
         {Object.entries(A).map(([k, v]) => {
           const active = accentKey === k;
+          const textColor = window.ACCENT_TEXT[k] || v;
           return (
-            <button key={k} onClick={() => onAccent(k)} style={{
+            <button key={k} type="button" aria-pressed={active}
+              onClick={() => onAccent(k)} style={{
               flex: 1, padding: '8px 6px', cursor: 'pointer',
+              minHeight: 44,
               background: P.bg, border: `1px solid ${active ? v : P.rule}`,
               borderRadius: 0, textAlign: 'center',
               fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-              color: active ? v : P.inkSoft, letterSpacing: 0.3,
+              color: active ? textColor : P.inkSoft, letterSpacing: 0.3,
             }}>
-              <div style={{
+              <div aria-hidden="true" style={{
                 width: 14, height: 14, background: v, borderRadius: '50%',
                 margin: '2px auto 6px',
                 boxShadow: active ? `0 0 0 3px ${v.replace(')', ' / 0.22)')}` : 'none',

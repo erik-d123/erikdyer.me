@@ -31,6 +31,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
       gap: narrow ? 14 : compact ? 18 : 0,
       alignItems: narrow ? 'stretch' : compact ? 'center' : 'stretch',
       overflowX: narrow ? 'visible' : compact ? 'auto' : 'visible',
+      flexWrap: compact ? 'wrap' : 'nowrap',
     }}>
       <div style={{ minWidth: narrow ? 0 : compact ? 170 : 'auto' }}>
         <div style={{
@@ -54,7 +55,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
         </div>
       </div>
 
-      <nav style={{
+      <nav aria-label="Portfolio sections" style={{
         borderTop: compact ? 'none' : `1px solid ${P.rule}`,
         paddingTop: compact ? 0 : 16,
         display: 'flex', flexDirection: compact ? 'row' : 'column',
@@ -68,7 +69,7 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
           const active = page === n.id;
           const nAcc = pageAccent(n.id);
           return (
-            <button key={n.id} onClick={() => setPage(n.id)}
+            <button key={n.id} type="button" onClick={() => setPage(n.id)}
               aria-current={active ? 'page' : undefined}
               style={{
                 textAlign: 'left', background: 'transparent', border: 'none',
@@ -99,31 +100,32 @@ window.Sidebar = function Sidebar({ page, setPage, palette, accentKey, compact =
         })}
       </nav>
 
-      {(!compact || narrow) && (
-        <div style={{
-          marginTop: compact ? 4 : 'auto',
-          paddingTop: 16,
-          borderTop: `1px dashed ${P.rule}`,
-          display: 'flex', flexWrap: 'wrap', gap: 14,
-          fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
-          letterSpacing: 0.4,
-          animation: 'inkFade 420ms var(--ease-out-quart) both',
-          animationDelay: '520ms',
-        }}>
-          {Object.entries(window.CONTACT_LINKS).map(([k, href]) => (
-            <a key={k} href={href}
-              target={href.startsWith('http') ? '_blank' : undefined}
-              rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              style={{
-                color: P.inkMute, textDecoration: 'none',
-                transition: 'color .2s var(--ease-out-quart)',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = P.ink; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = P.inkMute; }}
-            >{k}</a>
-          ))}
-        </div>
-      )}
+      <div style={{
+        marginTop: compact ? 0 : 'auto',
+        paddingTop: compact ? 8 : 16,
+        borderTop: `1px dashed ${P.rule}`,
+        display: 'flex', flexWrap: 'wrap', gap: compact ? 8 : 6,
+        width: compact ? '100%' : 'auto',
+        fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
+        letterSpacing: 0.4,
+        animation: 'inkFade 420ms var(--ease-out-quart) both',
+        animationDelay: '520ms',
+      }}>
+        {Object.entries(window.CONTACT_LINKS).map(([k, href]) => (
+          <a key={k} href={href}
+            target={href.startsWith('http') ? '_blank' : undefined}
+            rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            style={{
+              color: P.inkMute, textDecoration: 'none',
+              transition: 'color .2s var(--ease-out-quart)',
+              display: 'inline-flex', alignItems: 'center', minHeight: 44,
+              padding: '0 4px',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = P.ink; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = P.inkMute; }}
+          >{k}</a>
+        ))}
+      </div>
     </aside>
   );
 };

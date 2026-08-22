@@ -1,4 +1,6 @@
 .DS_Store
 node_modules/
 *.log
-.claude/launch.json
+.agents/
+.claude/
+skills-lock.json

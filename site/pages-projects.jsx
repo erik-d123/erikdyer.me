@@ -3,50 +3,72 @@
 window.ProjectsPage = function ProjectsPage({ palette }) {
   const P = palette, A = window.ACCENTS;
   const accent = A[window.PAGE_ACCENT.projects];
+  const textAccent = window.ACCENT_TEXT[window.PAGE_ACCENT.projects] || accent;
   const { width } = window.useViewport();
   const compact = width < 900;
-  const contactLinks = window.CONTACT_LINKS;
+  const contactLinks = Object.entries(window.CONTACT_LINKS)
+    .filter(([label]) => label !== 'resume');
 
   const projects = [
     {
-      name: 'Inter-Agent Alignment',
-      tagline: 'Wisdom of the crowds, applied at inference time',
-      desc: 'NLP research on aligning LLM agents through aggregation. Treating wisdom of the crowds as the inference algorithm: many sampled rollouts combined into a single decision rather than trusting any one agent in isolation',
-      stack: ['python', 'llm agents', 'inference'],
-      status: 'research',
-      proof: 'NLP research',
+      name: 'TigerJunction',
+      tagline: 'Course planning for 3,000+ Princeton students',
+      desc: 'Built backend services for course search and scheduling, including sub-200 ms p95 search across more than 1,500 course offerings with Redis caching and invalidation',
+      stack: ['typescript', 'postgresql', 'aws lambda', 'redis'],
+      status: 'public',
+      statusLabel: 'production software',
+      proof: 'TigerApps public repository',
+      href: 'https://github.com/TigerAppsOrg/tiger-junction',
+      linkLabel: 'repository',
+    },
+    {
+      name: 'MineBench model integration',
+      tagline: 'Production model support for a spatial AI benchmark',
+      desc: 'Added Muse Spark 1.2 across provider registration, structured-output handling, request tests, and model configuration in a merged 580-line open-source change',
+      stack: ['typescript', 'model apis', 'testing', 'open source'],
+      status: 'public',
+      statusLabel: 'merged contribution',
+      proof: 'MineBench pull request #77',
+      href: 'https://github.com/Ammaar-Alam/minebench/pull/77',
+      linkLabel: 'merged PR',
     },
     {
       name: 'HELMET long-context evals',
-      tagline: 'Retrieval was not the whole story.',
-      desc: 'Experiment work around HELMET and long-context reasoning. The useful diagnosis was that retrieval could stay strong while answer quality still dropped, pointing to answer-time dilution and locality issues.',
+      tagline: 'Long-context evaluation beyond retrieval',
+      desc: 'Local experiments using the open-source HELMET benchmark to compare retrieval strength with answer quality, including cases where answer quality dropped despite strong retrieval',
       stack: ['python', 'llm evals', 'analysis'],
       status: 'public',
-      proof: 'Public repo',
+      statusLabel: 'public experiment',
+      proof: 'Public HELMET fork',
       href: 'https://github.com/erik-d123/HELMET',
+      linkLabel: 'repository',
     },
     {
       name: 'Synthetic LiDAR Point Clouds',
-      tagline: 'From simulator to spatial perception',
-      desc: 'Research engineering for indoor 3D perception: synthetic scene generation, LiDAR and odometry pipelines, and Pointcept-compatible point clouds for downstream spatial models trained on simulated data',
+      tagline: 'Synthetic data for indoor 3D perception',
+      desc: 'PVL research pipeline spanning synthetic scene generation, LiDAR simulation, odometry outputs, and Pointcept-compatible point clouds',
       stack: ['python', 'point clouds', 'slam'],
       status: 'research',
-      proof: 'PVL research',
+      statusLabel: 'ongoing research',
+      proof: 'Princeton Vision & Learning Lab research',
     },
     {
       name: 'CityLearn hybrid RL',
-      tagline: 'Residual RL around an expert controller.',
-      desc: 'Final-project system for CityLearn energy management. Built a hybrid expert plus residual PPO approach, then audited leaderboard claims, seed aggregation, and released-evaluation consistency.',
+      tagline: 'Residual reinforcement learning for energy control',
+      desc: 'COS435 final project for CityLearn energy management: a hybrid expert controller with residual PPO, evaluated with attention to seeds, aggregation, and released-evaluation consistency',
       stack: ['python', 'ppo', 'citylearn'],
       status: 'course',
+      statusLabel: 'course project',
       proof: 'COS435 final project',
+      href: 'https://github.com/Ammaar-Alam/cos435-citylearn',
+      linkLabel: 'repository',
     },
   ];
 
   return (
     <window.PageShell palette={P}
       title="projects" accent={accent}
-      subtitle={<>Agents, perception, and <em style={{ color: accent }}>ML systems</em></>}
+      subtitle={<>Public work, research, and <em style={{ color: accent }}>systems</em></>}
     >
       <div style={{
         display: 'grid',
@@ -55,35 +77,33 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
         maxWidth: 1040,
       }}>
         {projects.map((p, i) => {
-          const statusAccent = A[window.STATUS_ACCENT[p.status]] || accent;
+          const statusAccent = window.ACCENT_TEXT[window.STATUS_ACCENT[p.status]] || textAccent;
           return (
           <article key={p.name} style={{
             background: P.paper, border: `1px solid ${P.rule}`,
             padding: '28px 30px 26px', position: 'relative',
-            transition: 'border-color .2s var(--ease-out-quart), transform .25s var(--ease-out-quart)',
+            transition: 'border-color .2s var(--ease-out-quart)',
             animation: 'inkFade 460ms var(--ease-out-quart) both',
             animationDelay: `${320 + i * 70}ms`,
           }}
             onMouseEnter={e => {
               e.currentTarget.style.borderColor = accent;
-              e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.borderColor = P.rule;
-              e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
             <div style={{
               fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
               letterSpacing: 1.4, color: statusAccent, marginBottom: 14,
-            }}>{p.status.toUpperCase()}</div>
+            }}>{p.statusLabel.toUpperCase()}</div>
             <h2 style={{
               margin: 0, fontFamily: '"Fraunces", serif', fontWeight: 400,
               fontSize: 32, letterSpacing: -0.8, color: P.ink,
             }}>{p.name}</h2>
             <div style={{
               marginTop: 6, fontFamily: '"Fraunces", serif', fontStyle: 'italic',
-              fontSize: 16, color: accent, letterSpacing: -0.2,
+              fontSize: 16, color: textAccent, letterSpacing: -0.2,
             }}>{p.tagline}</div>
             <p style={{
               margin: '18px 0 0', fontSize: 14.5, lineHeight: 1.7, color: P.inkSoft,
@@ -92,12 +112,16 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
             <div style={{
               marginTop: 18, fontFamily: '"JetBrains Mono", monospace',
               fontSize: 10, color: P.inkMute, letterSpacing: 0.5,
+              display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8,
             }}>
-              {p.proof}
+              <span>{p.proof}</span>
               {p.href && (
                 <a href={p.href} target="_blank" rel="noopener noreferrer"
-                  style={{ color: accent, marginLeft: 12, textDecoration: 'underline' }}>
-                  open ↗
+                  style={{
+                    color: textAccent, textDecoration: 'underline', display: 'inline-flex',
+                    alignItems: 'center', minHeight: 44, padding: '0 4px',
+                  }}>
+                  {p.linkLabel || 'open'} ↗
                 </a>
               )}
             </div>
@@ -134,12 +158,13 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
           }}>Say hi</div>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          {Object.entries(contactLinks).map(([x, href]) => (
+          {contactLinks.map(([x, href]) => (
             <a key={x} href={href}
               target={href.startsWith('http') ? '_blank' : undefined}
               rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
               style={{
               padding: '10px 18px', border: `1px solid ${P.ink}`,
+              minHeight: 44, display: 'inline-flex', alignItems: 'center',
               fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 500,
               color: P.ink, textDecoration: 'none', letterSpacing: 0.2,
               transition: 'all .2s',

@@ -34,9 +34,9 @@ window.CITIES = {
 window.TIMELINE_EVENTS = [
   {
     id: 'databricks26', year: 2026, month: 'Jun',
-    title: 'Databricks · SWE (incoming)',
+    title: 'Databricks · SWE intern',
     city: 'seattle', category: 'work',
-    body: 'Returning to Seattle for the summer on the Unity Catalog team',
+    body: 'Summer 2026 in Seattle on the Unity Catalog team',
     links: [{ label: 'Unity Catalog', href: 'https://www.databricks.com/product/unity-catalog' }],
   },
   {

@@ -5,8 +5,9 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
   const { width } = window.useViewport();
   const compact = width < 1100;
   const narrow = width < 640;
+  const { animateEntrance } = React.useContext(window.MotionContext);
   return (
-    <div key={title}>
+    <div key={title} className={`page-shell ${animateEntrance ? 'page-shell--enter' : 'page-shell--settled'}`}>
       <div style={{
         padding: compact ? '34px 24px 24px' : '60px 72px 32px',
         borderBottom: `1px solid ${P.rule}`,
@@ -32,7 +33,7 @@ window.PageShell = function PageShell({ palette, title, subtitle, accent, childr
               viewTransitionName: 'section-label',
             }}>{title.toUpperCase()}</span>
           </div>
-          <h1 style={{
+          <h1 id={`page-heading-${title}`} className="page-heading" tabIndex={-1} data-page-heading style={{
             margin: 0, fontFamily: '"Fraunces", Georgia, serif', fontWeight: 400,
             fontSize: narrow ? 40 : compact ? 'clamp(44px, 8vw, 60px)' : 'clamp(52px, 6vw, 76px)',
             lineHeight: 1, letterSpacing: -1.2, color: P.ink,
@@ -61,27 +62,34 @@ window.AboutPage = function AboutPage({ palette }) {
   return (
     <window.PageShell palette={P}
       title="about" accent={accent}
-      subtitle={<><em style={{ color: accent }}>Electrical & Computer Engineering</em> at Princeton</>}
+      subtitle={<><em style={{ color: accent }}>Backend systems</em> and applied ML</>}
     >
       <div style={{
         display: 'grid',
-        gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(360px, 0.78fr)',
-        gap: compact ? 24 : 56,
-        maxWidth: 1080,
-        alignItems: 'start',
+        gridTemplateColumns: compact ? '1fr' : 'minmax(0, 1fr) minmax(390px, 0.82fr)',
+        gap: compact ? 32 : 64, maxWidth: 1080, alignItems: 'start',
       }}>
-        <div style={{
-          fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1.7,
-          color: P.inkSoft, textWrap: 'pretty', maxWidth: 660,
-        }}>
-          <p style={{ marginTop: 0 }}>
-            Junior at Princeton exploring how LLM agents coordinate and fail on long-horizon tasks. Drawn to the systems work that turns agents into reliable products: agent infrastructure, inference, and the problems underneath
+        <div style={{ maxWidth: 650 }}>
+          <p style={{
+            margin: 0, fontSize: compact ? 18 : 20, lineHeight: 1.7,
+            color: P.inkSoft, textWrap: 'pretty',
+          }}>
+            I build data and AI systems that have to work under real constraints:
+            distributed metadata APIs, authorization infrastructure, agent evaluation,
+            and synthetic perception pipelines.
+          </p>
+          <p style={{
+            margin: '22px 0 0', fontSize: 15, lineHeight: 1.75,
+            color: P.inkMute, maxWidth: 590, textWrap: 'pretty',
+          }}>
+            My work spans industry engineering at Databricks, Amazon, and BlueHalo,
+            research in two Princeton labs, and software used by thousands of students.
           </p>
         </div>
 
         <aside style={{
-          background: P.paper, border: `1px solid ${P.rule}`,
-          padding: '26px 28px', alignSelf: 'start',
+          width: '100%', background: P.paper, border: `1px solid ${P.rule}`,
+          padding: '26px 28px',
         }}>
           <div style={{
             fontFamily: '"JetBrains Mono", monospace', fontSize: 10, letterSpacing: 1.4,
@@ -90,12 +98,11 @@ window.AboutPage = function AboutPage({ palette }) {
           {[
             ['school',   'Princeton, 2027'],
             ['degree',   'Electrical & Computer Eng.'],
-            ['lane',     'agents · ML systems'],
-            ['builds',   'evals · agent infra · serving'],
+            ['focus',    'distributed systems · applied ML'],
             ['industry', 'Databricks · Amazon · BlueHalo'],
           ].map(([k, v], i) => (
             <div key={k} style={{
-              display: 'grid', gridTemplateColumns: '64px minmax(0, 1fr)', gap: 14,
+              display: 'grid', gridTemplateColumns: '80px minmax(0, 1fr)', gap: 14,
               alignItems: 'baseline',
               padding: '9px 0', borderTop: i === 0 ? 'none' : `1px dashed ${P.rule}`,
               fontFamily: '"JetBrains Mono", monospace', fontSize: 12,

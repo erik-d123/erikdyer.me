@@ -3,19 +3,22 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Erik Dyer — Princeton ECE</title>
-<meta name="description" content="Princeton ECE junior. Research and engineering on agentic systems, ML infrastructure, and 3D perception.">
+<title>Erik Dyer · Princeton ECE</title>
+<meta name="description" content="Princeton ECE student building backend systems and applied ML across industry, research, and open source.">
 <link rel="canonical" href="https://erikdyer.me/">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='8' fill='%23E07B5B'/></svg>">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://erikdyer.me/">
-<meta property="og:title" content="Erik Dyer — Princeton ECE">
-<meta property="og:description" content="Princeton ECE junior. Research and engineering on agentic systems, ML infrastructure, and 3D perception.">
+<meta property="og:title" content="Erik Dyer · Princeton ECE">
+<meta property="og:description" content="Princeton ECE student building backend systems and applied ML across industry, research, and open source.">
+<meta property="og:image" content="https://erikdyer.me/site-preview.png">
+<meta property="og:image:alt" content="Erik Dyer's portfolio showing a systems-focused introduction and current snapshot">
 
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Erik Dyer — Princeton ECE">
-<meta name="twitter:description" content="Princeton ECE junior. Research and engineering on agentic systems, ML infrastructure, and 3D perception.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Erik Dyer · Princeton ECE">
+<meta name="twitter:description" content="Princeton ECE student building backend systems and applied ML across industry, research, and open source.">
+<meta name="twitter:image" content="https://erikdyer.me/site-preview.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,9 +34,49 @@
   body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   ::selection { background: oklch(0.58 0.14 265 / 0.25); }
 
-  button:focus-visible, a:focus-visible {
+  button:focus-visible, a:focus-visible, main:focus-visible, .page-heading:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
+  }
+
+  .page-heading:focus { outline: none; }
+  .page-heading:focus-visible {
+    outline: none;
+    position: relative;
+  }
+  .page-heading:focus-visible::before {
+    content: "";
+    position: absolute;
+    top: 0.12em;
+    bottom: 0.08em;
+    left: -16px;
+    width: 3px;
+    background: currentColor;
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    min-height: 44px;
+    padding: 11px 16px;
+    display: inline-flex;
+    align-items: center;
+    background: oklch(0.22 0.02 60);
+    color: oklch(0.97 0.012 85);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    text-decoration: none;
+    transform: translateY(calc(-100% - 20px));
+    transition: transform 180ms var(--ease-out-quart);
+  }
+
+  .skip-link:focus { transform: translateY(0); }
+
+  .page-shell--settled,
+  .page-shell--settled * {
+    animation: none !important;
   }
 
   @keyframes inkFade {
@@ -77,6 +120,19 @@
       animation-iteration-count: 1 !important;
       transition-duration: 1ms !important;
       scroll-behavior: auto !important;
+    }
+    ::view-transition-old(root),
+    ::view-transition-new(root),
+    ::view-transition-old(hero-title),
+    ::view-transition-new(hero-title),
+    ::view-transition-old(section-dot),
+    ::view-transition-new(section-dot),
+    ::view-transition-old(section-label),
+    ::view-transition-new(section-label),
+    ::view-transition-old(nav-active-dot),
+    ::view-transition-new(nav-active-dot) {
+      animation-duration: 1ms !important;
+      animation-delay: 0ms !important;
     }
   }
 
