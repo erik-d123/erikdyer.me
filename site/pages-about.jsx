@@ -78,13 +78,6 @@ window.AboutPage = function AboutPage({ palette }) {
             distributed metadata APIs, authorization infrastructure, agent evaluation,
             and synthetic perception pipelines.
           </p>
-          <p style={{
-            margin: '22px 0 0', fontSize: 15, lineHeight: 1.75,
-            color: P.inkMute, maxWidth: 590, textWrap: 'pretty',
-          }}>
-            My work spans industry engineering at Databricks, Amazon, and BlueHalo,
-            research in two Princeton labs, and software used by thousands of students.
-          </p>
         </div>
 
         <aside style={{

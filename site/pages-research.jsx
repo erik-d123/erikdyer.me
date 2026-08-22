@@ -10,12 +10,14 @@ window.ResearchPage = function ResearchPage({ palette }) {
   const labs = [
     {
       id: 'nlp',
-      name: 'Princeton NLP Lab',
+      name: 'Princeton Natural Language Processing Lab',
       advisor: 'Karthik R. Narasimhan',
       role: 'Undergraduate Researcher',
-      period: '2026 to present',
+      period: 'Apr 2026 to present',
       topic: 'Agent Evaluation & Coordination',
-      desc: 'Evaluating long-horizon AI agents to characterize error compounding, context drift, and recovery failures',
+      bullets: [
+        'Evaluated long-horizon AI agents to characterize error compounding, context drift, and recovery failures',
+      ],
       tags: ['llm agents', 'benchmarks', 'context', 'evaluation'],
     },
     {
@@ -23,9 +25,13 @@ window.ResearchPage = function ResearchPage({ palette }) {
       name: 'Princeton Vision & Learning Lab',
       advisor: 'Jia Deng',
       role: 'Undergraduate Researcher',
-      period: '2024 to present',
+      period: 'Sep 2024 to present',
       topic: '3D Perception & Synthetic Data',
-      desc: 'Added material-aware LiDAR simulation with pose and semantic ground truth to Infinigen, contributing to an 8.4% reduction in learned SLAM localization error through procedural pretraining',
+      bullets: [
+        'Added LiDAR simulation with pose and semantic ground truth to Infinigen, an open-source 3D world generator',
+        'Implemented BSDF-based LiDAR intensity and reflectivity with material-aware ray dropout',
+        'Reduced LiDAR localization error by 8.4% for learned SLAM on 3D benchmarks via procedural pretraining',
+      ],
       tags: ['3d vision', 'lidar', 'slam', 'point clouds'],
     },
   ];
@@ -76,10 +82,17 @@ window.ResearchPage = function ResearchPage({ palette }) {
                 TOPIC <span style={{ color: textAccent }}>{lab.topic.toUpperCase()}</span>
               </div>
 
-              <p style={{
-                margin: 0, fontSize: 16, lineHeight: 1.75, color: P.inkSoft,
-                maxWidth: 640, textWrap: 'pretty',
-              }}>{lab.desc}</p>
+              <ul style={{
+                margin: 0, paddingLeft: 20, maxWidth: 700,
+                color: P.inkSoft,
+              }}>
+                {lab.bullets.map(bullet => (
+                  <li key={bullet} style={{
+                    marginTop: 9, paddingLeft: 4, fontSize: 15.5,
+                    lineHeight: 1.65, textWrap: 'pretty',
+                  }}>{bullet}</li>
+                ))}
+              </ul>
 
               <div style={{ marginTop: 18, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {lab.tags.map(tag => (

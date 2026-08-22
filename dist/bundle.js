@@ -47,7 +47,7 @@ window.STATUS_ACCENT = {
 };
 window.CONTACT_LINKS = {
   resume: "https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=drive_link",
-  email: "mailto:ed1783@princeton.edu",
+  email: "mailto:erikdyer@princeton.edu",
   github: "https://github.com/erik-d123",
   linkedin: "https://www.linkedin.com/in/erikcdyer"
 };
@@ -338,14 +338,7 @@ window.AboutPage = function AboutPage({ palette }) {
       lineHeight: 1.7,
       color: P.inkSoft,
       textWrap: "pretty"
-    } }, "I build data and AI systems that have to work under real constraints: distributed metadata APIs, authorization infrastructure, agent evaluation, and synthetic perception pipelines."), /* @__PURE__ */ React.createElement("p", { style: {
-      margin: "22px 0 0",
-      fontSize: 15,
-      lineHeight: 1.75,
-      color: P.inkMute,
-      maxWidth: 590,
-      textWrap: "pretty"
-    } }, "My work spans industry engineering at Databricks, Amazon, and BlueHalo, research in two Princeton labs, and software used by thousands of students.")), /* @__PURE__ */ React.createElement("aside", { style: {
+    } }, "I build data and AI systems that have to work under real constraints: distributed metadata APIs, authorization infrastructure, agent evaluation, and synthetic perception pipelines.")), /* @__PURE__ */ React.createElement("aside", { style: {
       width: "100%",
       background: P.paper,
       border: `1px solid ${P.rule}`,
@@ -386,12 +379,14 @@ window.ResearchPage = function ResearchPage({ palette }) {
   const labs = [
     {
       id: "nlp",
-      name: "Princeton NLP Lab",
+      name: "Princeton Natural Language Processing Lab",
       advisor: "Karthik R. Narasimhan",
       role: "Undergraduate Researcher",
-      period: "2026 to present",
+      period: "Apr 2026 to present",
       topic: "Agent Evaluation & Coordination",
-      desc: "Evaluating long-horizon AI agents to characterize error compounding, context drift, and recovery failures",
+      bullets: [
+        "Evaluated long-horizon AI agents to characterize error compounding, context drift, and recovery failures"
+      ],
       tags: ["llm agents", "benchmarks", "context", "evaluation"]
     },
     {
@@ -399,9 +394,13 @@ window.ResearchPage = function ResearchPage({ palette }) {
       name: "Princeton Vision & Learning Lab",
       advisor: "Jia Deng",
       role: "Undergraduate Researcher",
-      period: "2024 to present",
+      period: "Sep 2024 to present",
       topic: "3D Perception & Synthetic Data",
-      desc: "Added material-aware LiDAR simulation with pose and semantic ground truth to Infinigen, contributing to an 8.4% reduction in learned SLAM localization error through procedural pretraining",
+      bullets: [
+        "Added LiDAR simulation with pose and semantic ground truth to Infinigen, an open-source 3D world generator",
+        "Implemented BSDF-based LiDAR intensity and reflectivity with material-aware ray dropout",
+        "Reduced LiDAR localization error by 8.4% for learned SLAM on 3D benchmarks via procedural pretraining"
+      ],
       tags: ["3d vision", "lidar", "slam", "point clouds"]
     }
   ];
@@ -452,14 +451,18 @@ window.ResearchPage = function ResearchPage({ palette }) {
       color: P.inkMute,
       letterSpacing: 0.6,
       marginBottom: 14
-    } }, "ADVISED BY ", /* @__PURE__ */ React.createElement("span", { style: { color: P.ink } }, lab.advisor), /* @__PURE__ */ React.createElement("span", { style: { margin: "0 10px", color: P.inkMute } }, "\xB7"), "TOPIC ", /* @__PURE__ */ React.createElement("span", { style: { color: textAccent } }, lab.topic.toUpperCase())), /* @__PURE__ */ React.createElement("p", { style: {
+    } }, "ADVISED BY ", /* @__PURE__ */ React.createElement("span", { style: { color: P.ink } }, lab.advisor), /* @__PURE__ */ React.createElement("span", { style: { margin: "0 10px", color: P.inkMute } }, "\xB7"), "TOPIC ", /* @__PURE__ */ React.createElement("span", { style: { color: textAccent } }, lab.topic.toUpperCase())), /* @__PURE__ */ React.createElement("ul", { style: {
       margin: 0,
-      fontSize: 16,
-      lineHeight: 1.75,
-      color: P.inkSoft,
-      maxWidth: 640,
+      paddingLeft: 20,
+      maxWidth: 700,
+      color: P.inkSoft
+    } }, lab.bullets.map((bullet) => /* @__PURE__ */ React.createElement("li", { key: bullet, style: {
+      marginTop: 9,
+      paddingLeft: 4,
+      fontSize: 15.5,
+      lineHeight: 1.65,
       textWrap: "pretty"
-    } }, lab.desc), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, display: "flex", flexWrap: "wrap", gap: 6 } }, lab.tags.map((tag) => /* @__PURE__ */ React.createElement("span", { key: tag, style: {
+    } }, bullet))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, display: "flex", flexWrap: "wrap", gap: 6 } }, lab.tags.map((tag) => /* @__PURE__ */ React.createElement("span", { key: tag, style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 10,
       padding: "3px 9px",
@@ -482,32 +485,38 @@ window.WorkPage = function WorkPage({ palette }) {
     {
       co: "Databricks",
       role: "Software Engineer Intern",
-      team: "Unity Catalog",
       loc: "Bellevue, WA",
       period: "May 2026 to Aug 2026",
       tag: "completed",
-      desc: "Redesigned a resumable metadata API that resolved 479 daily timeouts across 34 workspaces and cut p95 latency by 79% for requests spanning 1,500+ tables",
-      stack: ["scala", "unity catalog", "apis", "distributed systems"]
+      bullets: [
+        "Resolved 479 daily timeouts across 34 workspaces via a resumable Unity Catalog metadata API redesign",
+        "Reduced p95 latency by 79% for previously timed-out metadata requests spanning 1,500+ tables via pagination",
+        "Eliminated 5.8K database queries per request recovery across servers via affinity routing and versioned caching"
+      ]
     },
     {
       co: "Amazon",
-      role: "Software Development Engineer Intern",
-      team: "Identity & Access Management",
+      role: "Software Engineer Intern",
       loc: "Seattle, WA",
       period: "May 2025 to Aug 2025",
       tag: "completed",
-      desc: "Consolidated DynamoDB checks in Amazon Verified Permissions to cut p99 account-access latency by 32%, then provisioned tenant-isolated authorization infrastructure for 1M+ accounts",
-      stack: ["java", "dynamodb", "aws cdk", "authorization"]
+      bullets: [
+        "Cut p99 IAM account-access latency by 32% by consolidating DynamoDB checks in Amazon Verified Permissions",
+        "Provisioned capacity for 1M+ accounts via tenant-isolated AWS CDK infrastructure for granular authorization",
+        "Supported 1.2K authorization decisions per second by building tenant throttling, fault isolation, and SLO alerting"
+      ]
     },
     {
       co: "BlueHalo",
       role: "Software Engineer Intern",
-      team: "Data Platforms",
       loc: "Baltimore, MD",
       period: "May 2024 to Aug 2024",
       tag: "completed",
-      desc: "Migrated ETL pipelines to Spark on EMR with Airflow, reducing dataset onboarding time by 25% while processing more than 5M records per run",
-      stack: ["python", "spark", "emr", "airflow"]
+      bullets: [
+        "Cut dataset onboarding time by 25% by migrating ETL pipelines to Spark on EMR orchestrated with Airflow",
+        "Processed 5M+ records per run by partitioning datasets and parallelizing ETL across Spark workers",
+        "Lowered redundant processing by 20% with idempotent writes and checkpointed incremental Spark loads"
+      ]
     }
   ];
   return /* @__PURE__ */ React.createElement(
@@ -571,33 +580,24 @@ window.WorkPage = function WorkPage({ palette }) {
       fontSize: 42,
       letterSpacing: -1,
       color: P.ink
-    } }, j.co), /* @__PURE__ */ React.createElement("span", { style: {
-      fontFamily: '"Fraunces", serif',
-      fontStyle: "italic",
-      fontSize: 19,
-      color: textAccent
-    } }, "\xB7 ", j.team)), /* @__PURE__ */ React.createElement("div", { style: {
+    } }, j.co)), /* @__PURE__ */ React.createElement("div", { style: {
       fontFamily: '"JetBrains Mono", monospace',
       fontSize: 11,
       color: P.inkMute,
       letterSpacing: 0.6,
       marginTop: 6
-    } }, j.role.toUpperCase(), " \xB7 ", j.loc.toUpperCase()), /* @__PURE__ */ React.createElement("p", { style: {
-      margin: "16px 0 0",
-      fontSize: 16,
-      lineHeight: 1.75,
-      color: P.inkSoft,
-      maxWidth: 640,
+    } }, j.role.toUpperCase(), " \xB7 ", j.loc.toUpperCase()), /* @__PURE__ */ React.createElement("ul", { style: {
+      margin: "18px 0 0",
+      paddingLeft: 20,
+      maxWidth: 700,
+      color: P.inkSoft
+    } }, j.bullets.map((bullet) => /* @__PURE__ */ React.createElement("li", { key: bullet, style: {
+      marginTop: 9,
+      paddingLeft: 4,
+      fontSize: 15.5,
+      lineHeight: 1.65,
       textWrap: "pretty"
-    } }, j.desc), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 16, display: "flex", flexWrap: "wrap", gap: 6 } }, j.stack.map((s) => /* @__PURE__ */ React.createElement("span", { key: s, style: {
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: 10,
-      padding: "3px 9px",
-      border: `1px solid ${P.rule}`,
-      color: P.inkSoft,
-      letterSpacing: 0.3,
-      background: P.paper
-    } }, s)))))))
+    } }, bullet)))))))
   );
 };
 
@@ -610,28 +610,6 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   const compact = width < 900;
   const contactLinks = Object.entries(window.CONTACT_LINKS).filter(([label]) => label !== "resume");
   const projects = [
-    {
-      name: "TigerJunction",
-      tagline: "Course planning for 3,000+ Princeton students",
-      desc: "Built backend services for course search and scheduling, including sub-200 ms p95 search across more than 1,500 course offerings with Redis caching and invalidation",
-      stack: ["typescript", "postgresql", "aws lambda", "redis"],
-      status: "public",
-      statusLabel: "production software",
-      proof: "TigerApps public repository",
-      href: "https://github.com/TigerAppsOrg/tiger-junction",
-      linkLabel: "repository"
-    },
-    {
-      name: "MineBench model integration",
-      tagline: "Production model support for a spatial AI benchmark",
-      desc: "Added Muse Spark 1.2 across provider registration, structured-output handling, request tests, and model configuration in a merged 580-line open-source change",
-      stack: ["typescript", "model apis", "testing", "open source"],
-      status: "public",
-      statusLabel: "merged contribution",
-      proof: "MineBench pull request #77",
-      href: "https://github.com/Ammaar-Alam/minebench/pull/77",
-      linkLabel: "merged PR"
-    },
     {
       name: "HELMET long-context evals",
       tagline: "Long-context evaluation beyond retrieval",
@@ -670,110 +648,70 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
       palette: P,
       title: "projects",
       accent,
-      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, "Public work, research, and ", /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "systems"))
+      subtitle: /* @__PURE__ */ React.createElement(React.Fragment, null, "Research, experiments, and ", /* @__PURE__ */ React.createElement("em", { style: { color: accent } }, "coursework"))
     },
     /* @__PURE__ */ React.createElement("div", { style: {
-      display: "grid",
-      gridTemplateColumns: compact ? "1fr" : "repeat(2, minmax(0, 1fr))",
-      gap: 20,
       maxWidth: 1040
     } }, projects.map((p, i) => {
       const statusAccent = window.ACCENT_TEXT[window.STATUS_ACCENT[p.status]] || textAccent;
-      return /* @__PURE__ */ React.createElement(
-        "article",
-        {
-          key: p.name,
-          style: {
-            background: P.paper,
-            border: `1px solid ${P.rule}`,
-            padding: "28px 30px 26px",
-            position: "relative",
-            transition: "border-color .2s var(--ease-out-quart)",
-            animation: "inkFade 460ms var(--ease-out-quart) both",
-            animationDelay: `${320 + i * 70}ms`
-          },
-          onMouseEnter: (e) => {
-            e.currentTarget.style.borderColor = accent;
-          },
-          onMouseLeave: (e) => {
-            e.currentTarget.style.borderColor = P.rule;
-          }
-        },
-        /* @__PURE__ */ React.createElement("div", { style: {
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: 10,
-          letterSpacing: 1.4,
-          color: statusAccent,
-          marginBottom: 14
-        } }, p.statusLabel.toUpperCase()),
-        /* @__PURE__ */ React.createElement("h2", { style: {
-          margin: 0,
-          fontFamily: '"Fraunces", serif',
-          fontWeight: 400,
-          fontSize: 32,
-          letterSpacing: -0.8,
-          color: P.ink
-        } }, p.name),
-        /* @__PURE__ */ React.createElement("div", { style: {
-          marginTop: 6,
-          fontFamily: '"Fraunces", serif',
-          fontStyle: "italic",
-          fontSize: 16,
-          color: textAccent,
-          letterSpacing: -0.2
-        } }, p.tagline),
-        /* @__PURE__ */ React.createElement("p", { style: {
-          margin: "18px 0 0",
-          fontSize: 14.5,
-          lineHeight: 1.7,
-          color: P.inkSoft,
-          textWrap: "pretty"
-        } }, p.desc),
-        /* @__PURE__ */ React.createElement("div", { style: {
-          marginTop: 18,
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: 10,
-          color: P.inkMute,
-          letterSpacing: 0.5,
-          display: "flex",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 8
-        } }, /* @__PURE__ */ React.createElement("span", null, p.proof), p.href && /* @__PURE__ */ React.createElement(
-          "a",
-          {
-            href: p.href,
-            target: "_blank",
-            rel: "noopener noreferrer",
-            style: {
-              color: textAccent,
-              textDecoration: "underline",
-              display: "inline-flex",
-              alignItems: "center",
-              minHeight: 44,
-              padding: "0 4px"
-            }
-          },
-          p.linkLabel || "open",
-          " \u2197"
-        )),
-        /* @__PURE__ */ React.createElement("div", { style: {
-          marginTop: 22,
-          paddingTop: 14,
-          borderTop: `1px dashed ${P.rule}`,
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 6
-        } }, p.stack.map((s) => /* @__PURE__ */ React.createElement("span", { key: s, style: {
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: 10,
-          padding: "3px 8px",
-          border: `1px solid ${P.rule}`,
-          color: P.inkSoft,
-          letterSpacing: 0.3,
-          background: P.bgAlt
-        } }, s)))
-      );
+      return /* @__PURE__ */ React.createElement("article", { key: p.name, style: {
+        display: "grid",
+        gridTemplateColumns: compact ? "1fr" : "170px minmax(0, 1fr)",
+        gap: compact ? 14 : 36,
+        padding: compact ? "28px 0" : "34px 0",
+        borderTop: i === 0 ? "none" : `1px solid ${P.rule}`,
+        animation: "inkFade 460ms var(--ease-out-quart) both",
+        animationDelay: `${320 + i * 70}ms`
+      } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: {
+        fontFamily: '"JetBrains Mono", monospace',
+        fontSize: 10,
+        letterSpacing: 1.4,
+        color: statusAccent
+      } }, p.statusLabel.toUpperCase()), /* @__PURE__ */ React.createElement("div", { style: {
+        marginTop: 12,
+        fontFamily: '"JetBrains Mono", monospace',
+        fontSize: 10,
+        color: P.inkMute,
+        lineHeight: 1.6
+      } }, p.proof), p.href && /* @__PURE__ */ React.createElement("a", { href: p.href, target: "_blank", rel: "noopener noreferrer", style: {
+        marginTop: 6,
+        color: textAccent,
+        textDecoration: "underline",
+        display: "inline-flex",
+        alignItems: "center",
+        minHeight: 44,
+        fontFamily: '"JetBrains Mono", monospace',
+        fontSize: 10
+      } }, p.linkLabel || "open", " \u2197")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h2", { style: {
+        margin: 0,
+        fontFamily: '"Fraunces", serif',
+        fontWeight: 400,
+        fontSize: compact ? 32 : 38,
+        letterSpacing: -0.8,
+        color: P.ink
+      } }, p.name), /* @__PURE__ */ React.createElement("div", { style: {
+        marginTop: 6,
+        fontFamily: '"Fraunces", serif',
+        fontStyle: "italic",
+        fontSize: 16,
+        color: textAccent,
+        letterSpacing: -0.2
+      } }, p.tagline), /* @__PURE__ */ React.createElement("p", { style: {
+        margin: "16px 0 0",
+        fontSize: 15.5,
+        lineHeight: 1.7,
+        color: P.inkSoft,
+        maxWidth: 680,
+        textWrap: "pretty"
+      } }, p.desc), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 18, display: "flex", flexWrap: "wrap", gap: 6 } }, p.stack.map((s) => /* @__PURE__ */ React.createElement("span", { key: s, style: {
+        fontFamily: '"JetBrains Mono", monospace',
+        fontSize: 10,
+        padding: "3px 8px",
+        border: `1px solid ${P.rule}`,
+        color: P.inkSoft,
+        letterSpacing: 0.3,
+        background: P.bgAlt
+      } }, s)))));
     })),
     /* @__PURE__ */ React.createElement("div", { style: {
       marginTop: 72,

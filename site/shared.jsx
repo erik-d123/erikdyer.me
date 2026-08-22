@@ -54,7 +54,7 @@ window.STATUS_ACCENT = {
 
 window.CONTACT_LINKS = {
   resume:  'https://drive.google.com/file/d/1yym7v8DOnX1Zk_fqZzd2ga_3XL06BaVl/view?usp=drive_link',
-  email:    'mailto:ed1783@princeton.edu',
+  email:    'mailto:erikdyer@princeton.edu',
   github:   'https://github.com/erik-d123',
   linkedin: 'https://www.linkedin.com/in/erikcdyer',
 };

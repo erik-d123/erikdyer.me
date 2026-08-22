@@ -11,28 +11,6 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
 
   const projects = [
     {
-      name: 'TigerJunction',
-      tagline: 'Course planning for 3,000+ Princeton students',
-      desc: 'Built backend services for course search and scheduling, including sub-200 ms p95 search across more than 1,500 course offerings with Redis caching and invalidation',
-      stack: ['typescript', 'postgresql', 'aws lambda', 'redis'],
-      status: 'public',
-      statusLabel: 'production software',
-      proof: 'TigerApps public repository',
-      href: 'https://github.com/TigerAppsOrg/tiger-junction',
-      linkLabel: 'repository',
-    },
-    {
-      name: 'MineBench model integration',
-      tagline: 'Production model support for a spatial AI benchmark',
-      desc: 'Added Muse Spark 1.2 across provider registration, structured-output handling, request tests, and model configuration in a merged 580-line open-source change',
-      stack: ['typescript', 'model apis', 'testing', 'open source'],
-      status: 'public',
-      statusLabel: 'merged contribution',
-      proof: 'MineBench pull request #77',
-      href: 'https://github.com/Ammaar-Alam/minebench/pull/77',
-      linkLabel: 'merged PR',
-    },
-    {
       name: 'HELMET long-context evals',
       tagline: 'Long-context evaluation beyond retrieval',
       desc: 'Local experiments using the open-source HELMET benchmark to compare retrieval strength with answer quality, including cases where answer quality dropped despite strong retrieval',
@@ -68,74 +46,62 @@ window.ProjectsPage = function ProjectsPage({ palette }) {
   return (
     <window.PageShell palette={P}
       title="projects" accent={accent}
-      subtitle={<>Public work, research, and <em style={{ color: accent }}>systems</em></>}
+      subtitle={<>Research, experiments, and <em style={{ color: accent }}>coursework</em></>}
     >
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: compact ? '1fr' : 'repeat(2, minmax(0, 1fr))',
-        gap: 20,
         maxWidth: 1040,
       }}>
         {projects.map((p, i) => {
           const statusAccent = window.ACCENT_TEXT[window.STATUS_ACCENT[p.status]] || textAccent;
           return (
           <article key={p.name} style={{
-            background: P.paper, border: `1px solid ${P.rule}`,
-            padding: '28px 30px 26px', position: 'relative',
-            transition: 'border-color .2s var(--ease-out-quart)',
+            display: 'grid',
+            gridTemplateColumns: compact ? '1fr' : '170px minmax(0, 1fr)',
+            gap: compact ? 14 : 36,
+            padding: compact ? '28px 0' : '34px 0',
+            borderTop: i === 0 ? 'none' : `1px solid ${P.rule}`,
             animation: 'inkFade 460ms var(--ease-out-quart) both',
             animationDelay: `${320 + i * 70}ms`,
-          }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = accent;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = P.rule;
-            }}
-          >
-            <div style={{
-              fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-              letterSpacing: 1.4, color: statusAccent, marginBottom: 14,
-            }}>{p.statusLabel.toUpperCase()}</div>
-            <h2 style={{
-              margin: 0, fontFamily: '"Fraunces", serif', fontWeight: 400,
-              fontSize: 32, letterSpacing: -0.8, color: P.ink,
-            }}>{p.name}</h2>
-            <div style={{
-              marginTop: 6, fontFamily: '"Fraunces", serif', fontStyle: 'italic',
-              fontSize: 16, color: textAccent, letterSpacing: -0.2,
-            }}>{p.tagline}</div>
-            <p style={{
-              margin: '18px 0 0', fontSize: 14.5, lineHeight: 1.7, color: P.inkSoft,
-              textWrap: 'pretty',
-            }}>{p.desc}</p>
-            <div style={{
-              marginTop: 18, fontFamily: '"JetBrains Mono", monospace',
-              fontSize: 10, color: P.inkMute, letterSpacing: 0.5,
-              display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8,
-            }}>
-              <span>{p.proof}</span>
+          }}>
+            <div>
+              <div style={{
+                fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
+                letterSpacing: 1.4, color: statusAccent,
+              }}>{p.statusLabel.toUpperCase()}</div>
+              <div style={{
+                marginTop: 12, fontFamily: '"JetBrains Mono", monospace',
+                fontSize: 10, color: P.inkMute, lineHeight: 1.6,
+              }}>{p.proof}</div>
               {p.href && (
-                <a href={p.href} target="_blank" rel="noopener noreferrer"
-                  style={{
-                    color: textAccent, textDecoration: 'underline', display: 'inline-flex',
-                    alignItems: 'center', minHeight: 44, padding: '0 4px',
-                  }}>
-                  {p.linkLabel || 'open'} ↗
-                </a>
+                <a href={p.href} target="_blank" rel="noopener noreferrer" style={{
+                  marginTop: 6, color: textAccent, textDecoration: 'underline',
+                  display: 'inline-flex', alignItems: 'center', minHeight: 44,
+                  fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
+                }}>{p.linkLabel || 'open'} ↗</a>
               )}
             </div>
-            <div style={{
-              marginTop: 22, paddingTop: 14, borderTop: `1px dashed ${P.rule}`,
-              display: 'flex', flexWrap: 'wrap', gap: 6,
-            }}>
-              {p.stack.map(s => (
-                <span key={s} style={{
-                  fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-                  padding: '3px 8px', border: `1px solid ${P.rule}`,
-                  color: P.inkSoft, letterSpacing: 0.3, background: P.bgAlt,
-                }}>{s}</span>
-              ))}
+            <div>
+              <h2 style={{
+                margin: 0, fontFamily: '"Fraunces", serif', fontWeight: 400,
+                fontSize: compact ? 32 : 38, letterSpacing: -0.8, color: P.ink,
+              }}>{p.name}</h2>
+              <div style={{
+                marginTop: 6, fontFamily: '"Fraunces", serif', fontStyle: 'italic',
+                fontSize: 16, color: textAccent, letterSpacing: -0.2,
+              }}>{p.tagline}</div>
+              <p style={{
+                margin: '16px 0 0', fontSize: 15.5, lineHeight: 1.7,
+                color: P.inkSoft, maxWidth: 680, textWrap: 'pretty',
+              }}>{p.desc}</p>
+              <div style={{ marginTop: 18, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {p.stack.map(s => (
+                  <span key={s} style={{
+                    fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
+                    padding: '3px 8px', border: `1px solid ${P.rule}`,
+                    color: P.inkSoft, letterSpacing: 0.3, background: P.bgAlt,
+                  }}>{s}</span>
+                ))}
+              </div>
             </div>
           </article>
           );

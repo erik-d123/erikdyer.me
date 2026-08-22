@@ -11,32 +11,38 @@ window.WorkPage = function WorkPage({ palette }) {
     {
       co: 'Databricks',
       role: 'Software Engineer Intern',
-      team: 'Unity Catalog',
       loc: 'Bellevue, WA',
       period: 'May 2026 to Aug 2026',
       tag: 'completed',
-      desc: 'Redesigned a resumable metadata API that resolved 479 daily timeouts across 34 workspaces and cut p95 latency by 79% for requests spanning 1,500+ tables',
-      stack: ['scala', 'unity catalog', 'apis', 'distributed systems'],
+      bullets: [
+        'Resolved 479 daily timeouts across 34 workspaces via a resumable Unity Catalog metadata API redesign',
+        'Reduced p95 latency by 79% for previously timed-out metadata requests spanning 1,500+ tables via pagination',
+        'Eliminated 5.8K database queries per request recovery across servers via affinity routing and versioned caching',
+      ],
     },
     {
       co: 'Amazon',
-      role: 'Software Development Engineer Intern',
-      team: 'Identity & Access Management',
+      role: 'Software Engineer Intern',
       loc: 'Seattle, WA',
       period: 'May 2025 to Aug 2025',
       tag: 'completed',
-      desc: 'Consolidated DynamoDB checks in Amazon Verified Permissions to cut p99 account-access latency by 32%, then provisioned tenant-isolated authorization infrastructure for 1M+ accounts',
-      stack: ['java', 'dynamodb', 'aws cdk', 'authorization'],
+      bullets: [
+        'Cut p99 IAM account-access latency by 32% by consolidating DynamoDB checks in Amazon Verified Permissions',
+        'Provisioned capacity for 1M+ accounts via tenant-isolated AWS CDK infrastructure for granular authorization',
+        'Supported 1.2K authorization decisions per second by building tenant throttling, fault isolation, and SLO alerting',
+      ],
     },
     {
       co: 'BlueHalo',
       role: 'Software Engineer Intern',
-      team: 'Data Platforms',
       loc: 'Baltimore, MD',
       period: 'May 2024 to Aug 2024',
       tag: 'completed',
-      desc: 'Migrated ETL pipelines to Spark on EMR with Airflow, reducing dataset onboarding time by 25% while processing more than 5M records per run',
-      stack: ['python', 'spark', 'emr', 'airflow'],
+      bullets: [
+        'Cut dataset onboarding time by 25% by migrating ETL pipelines to Spark on EMR orchestrated with Airflow',
+        'Processed 5M+ records per run by partitioning datasets and parallelizing ETL across Spark workers',
+        'Lowered redundant processing by 20% with idempotent writes and checkpointed incremental Spark loads',
+      ],
     },
   ];
 
@@ -92,28 +98,22 @@ window.WorkPage = function WorkPage({ palette }) {
                   margin: 0, fontFamily: '"Fraunces", serif', fontWeight: 400,
                   fontSize: 42, letterSpacing: -1, color: P.ink,
                 }}>{j.co}</h2>
-                <span style={{
-                  fontFamily: '"Fraunces", serif', fontStyle: 'italic',
-                  fontSize: 19, color: textAccent,
-                }}>· {j.team}</span>
               </div>
               <div style={{
                 fontFamily: '"JetBrains Mono", monospace', fontSize: 11,
                 color: P.inkMute, letterSpacing: 0.6, marginTop: 6,
               }}>{j.role.toUpperCase()} · {j.loc.toUpperCase()}</div>
-              <p style={{
-                margin: '16px 0 0', fontSize: 16, lineHeight: 1.75, color: P.inkSoft,
-                maxWidth: 640, textWrap: 'pretty',
-              }}>{j.desc}</p>
-              <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {j.stack.map(s => (
-                  <span key={s} style={{
-                    fontFamily: '"JetBrains Mono", monospace', fontSize: 10,
-                    padding: '3px 9px', border: `1px solid ${P.rule}`,
-                    color: P.inkSoft, letterSpacing: 0.3, background: P.paper,
-                  }}>{s}</span>
+              <ul style={{
+                margin: '18px 0 0', paddingLeft: 20, maxWidth: 700,
+                color: P.inkSoft,
+              }}>
+                {j.bullets.map(bullet => (
+                  <li key={bullet} style={{
+                    marginTop: 9, paddingLeft: 4, fontSize: 15.5,
+                    lineHeight: 1.65, textWrap: 'pretty',
+                  }}>{bullet}</li>
                 ))}
-              </div>
+              </ul>
             </div>
           </article>
         ))}
