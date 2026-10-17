@@ -23,7 +23,7 @@ Then open `http://localhost:8790`.
 
 ```text
 index.html     the page: content, styles, and copy-email script
-logos/         school and company marks shown in the logo tiles
+logos/         school, lab, and company marks shown in the logo tiles
 favicon.svg    site icon (adapts to light and dark)
 og.png         1200x630 social preview image
 PRODUCT.md     audience and content principles
