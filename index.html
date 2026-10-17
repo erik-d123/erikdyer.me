@@ -1,153 +1,287 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Erik Dyer · Princeton ECE</title>
-<meta name="description" content="Princeton ECE student building backend systems and applied ML across industry, research, and open source.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Erik Dyer</title>
+<meta name="description" content="Princeton ECE student working on AI agents, 3D perception, and backend systems.">
 <link rel="canonical" href="https://erikdyer.me/">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='8' fill='%23E07B5B'/></svg>">
-
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://erikdyer.me/">
-<meta property="og:title" content="Erik Dyer · Princeton ECE">
-<meta property="og:description" content="Princeton ECE student building backend systems and applied ML across industry, research, and open source.">
-<meta property="og:image" content="https://erikdyer.me/site-preview.png">
-<meta property="og:image:alt" content="Erik Dyer's portfolio showing a systems-focused introduction and current snapshot">
-
+<meta property="og:title" content="Erik Dyer">
+<meta property="og:description" content="Princeton ECE student working on AI agents, 3D perception, and backend systems.">
+<meta property="og:image" content="https://erikdyer.me/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Erik Dyer, Electrical and Computer Engineering at Princeton, Class of 2027">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Erik Dyer · Princeton ECE">
-<meta name="twitter:description" content="Princeton ECE student building backend systems and applied ML across industry, research, and open source.">
-<meta name="twitter:image" content="https://erikdyer.me/site-preview.png">
-
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e0e0e" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-    --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+    --bg: #fbfbfa;
+    --ink: #161616;
+    --soft: #5f5f5c;
+    --mute: #8f8f8b;
+    --rule: rgb(0 0 0 / 0.08);
+    --live: #2f9e5b;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e0e0e;
+      --ink: #ececea;
+      --soft: #a3a39f;
+      --mute: #6f6f6b;
+      --rule: rgb(255 255 255 / 0.09);
+      --live: #4cc27c;
+    }
   }
 
-  html, body { margin: 0; padding: 0; }
   * { box-sizing: border-box; }
-  body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  ::selection { background: oklch(0.58 0.14 265 / 0.25); }
-
-  button:focus-visible, a:focus-visible, main:focus-visible, .page-heading:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 16px/1.6 Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
+  ::selection { background: var(--ink); color: var(--bg); }
 
-  .page-heading:focus { outline: none; }
-  .page-heading:focus-visible {
-    outline: none;
-    position: relative;
-  }
-  .page-heading:focus-visible::before {
-    content: "";
-    position: absolute;
-    top: 0.12em;
-    bottom: 0.08em;
-    left: -16px;
-    width: 3px;
-    background: currentColor;
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: clamp(56px, 12vh, 120px) 24px 96px;
   }
 
-  .skip-link {
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 1000;
-    min-height: 44px;
-    padding: 11px 16px;
-    display: inline-flex;
-    align-items: center;
-    background: oklch(0.22 0.02 60);
-    color: oklch(0.97 0.012 85);
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 12px;
-    text-decoration: none;
-    transform: translateY(calc(-100% - 20px));
-    transition: transform 180ms var(--ease-out-quart);
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: text-decoration-color 160ms var(--ease);
+  }
+  a:hover { text-decoration-color: currentColor; }
+  a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
+
+  .mono {
+    font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13.5px;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
   }
 
-  .skip-link:focus { transform: translateY(0); }
+  /* Header */
+  h1 { margin: 0; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+  .intro { margin: 28px 0 0; color: var(--soft); max-width: 34em; text-wrap: pretty; }
+  .links { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 24px 0 0; padding: 0; list-style: none; }
+  .links a { color: var(--soft); }
+  .links a:hover { color: var(--ink); }
 
-  .page-shell--settled,
-  .page-shell--settled * {
-    animation: none !important;
+  /* Sections */
+  section { margin-top: 64px; }
+  h2 {
+    margin: 0 0 4px;
+    font-size: 14px; font-weight: 400;
+    color: var(--mute);
   }
-
-  @keyframes inkFade {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pageIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes slideInR {
-    from { opacity: 0; transform: translateX(12px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes dotPop {
-    from { opacity: 0; transform: scale(0.4); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 320ms;
-    animation-timing-function: var(--ease-out-quart);
-  }
-  ::view-transition-old(hero-title),
-  ::view-transition-new(hero-title),
-  ::view-transition-old(section-dot),
-  ::view-transition-new(section-dot),
-  ::view-transition-old(section-label),
-  ::view-transition-new(section-label),
-  ::view-transition-old(nav-active-dot),
-  ::view-transition-new(nav-active-dot) {
-    animation-duration: 460ms;
-    animation-timing-function: var(--ease-out-expo);
-    mix-blend-mode: normal;
+  .entries { list-style: none; margin: 0; padding: 0; }
+  .entry { padding: 18px 0; border-top: 1px solid var(--rule); }
+  .entry:first-child { border-top: 0; }
+  .row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+  .title { font-weight: 500; letter-spacing: -0.01em; }
+  a.title { text-decoration: none; }
+  a.title::after { content: "\2009↗"; color: var(--mute); font-weight: 400; transition: color 160ms var(--ease); }
+  a.title:hover::after { color: var(--ink); }
+  .date { color: var(--mute); white-space: nowrap; flex-shrink: 0; }
+  .meta { margin: 1px 0 0; color: var(--soft); }
+  .desc { margin: 8px 0 0; color: var(--soft); text-wrap: pretty; }
+  .live {
+    display: inline-block; width: 6px; height: 6px; margin-right: 7px;
+    border-radius: 50%; background: var(--live);
+    vertical-align: 1px;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--live) 18%, transparent);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 1ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 1ms !important;
-      scroll-behavior: auto !important;
+  .has-logo { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 16px; }
+  .logo {
+    width: 40px; height: 40px; margin-top: 0;
+    display: grid; place-items: center;
+    border: 1px solid var(--rule); border-radius: 10px;
+    background: #fff;
+  }
+  .logo img { width: 26px; height: 26px; object-fit: contain; }
+  .logo .shield { width: 28px; height: 31px; }
+
+  .school { margin-top: 28px; }
+  .nw { white-space: nowrap; }
+
+  footer { margin-top: 72px; color: var(--mute); }
+
+  @media (max-width: 480px) {
+    .row { flex-direction: column; gap: 0; }
+  }
+
+  /* Print: a one-page resume, light, with contact details spelled out */
+  @media print {
+    @page { margin: 0.55in 0.6in; }
+    :root { --bg: #fff; --ink: #000; --soft: #333; --mute: #666; --rule: #ddd; --live: #000; }
+    body { font-size: 10pt; line-height: 1.45; }
+    main { max-width: none; padding: 0; }
+    .reveal { animation: none !important; }
+    .intro { margin-top: 10pt; max-width: none; }
+    .links { margin-top: 8pt; }
+    .links a { color: var(--ink); text-decoration: none; }
+    .links a::after { content: ": " attr(data-print); color: var(--soft); }
+    section { margin-top: 14pt; break-inside: auto; }
+    .entry { padding: 5pt 0; break-inside: avoid; }
+    .desc { margin-top: 3pt; }
+    .live { box-shadow: none; }
+    a.title::after { content: none; }
+    .mono { font-size: 9pt; }
+    footer { display: none; }
+  }
+
+  /* Entrance: quick, staggered, transform and opacity only */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal 640ms var(--ease) both;
+      animation-delay: calc(var(--i, 0) * 70ms);
     }
-    ::view-transition-old(root),
-    ::view-transition-new(root),
-    ::view-transition-old(hero-title),
-    ::view-transition-new(hero-title),
-    ::view-transition-old(section-dot),
-    ::view-transition-new(section-dot),
-    ::view-transition-old(section-label),
-    ::view-transition-new(section-label),
-    ::view-transition-old(nav-active-dot),
-    ::view-transition-new(nav-active-dot) {
-      animation-duration: 1ms !important;
-      animation-delay: 0ms !important;
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
     }
   }
-
-  .app-scroll::-webkit-scrollbar { width: 10px; }
-  .app-scroll::-webkit-scrollbar-track { background: transparent; }
-  .app-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 5px; }
 </style>
 </head>
 <body>
-<div id="root"></div>
+<main>
+  <header>
+    <h1 class="reveal">Erik Dyer</h1>
+    <div class="school has-logo reveal" style="--i:1">
+      <span class="logo"><img src="logos/princeton.svg" alt="" class="shield"></span>
+      <div>
+        <div class="row">
+          <span class="title">Princeton University</span>
+          <span class="date mono">Class of 2027</span>
+        </div>
+        <p class="meta">Electrical and Computer Engineering</p>
+        <p class="meta">Minors in <span class="nw">Computer Science</span> · <span class="nw">Statistics and Machine Learning</span></p>
+      </div>
+    </div>
+    <p class="intro reveal" style="--i:2">
+      I work on training and evaluating AI systems, from pretraining models for 3D perception
+      to studying how AI agents handle multi-step tasks
+    </p>
+    <ul class="links reveal" style="--i:3">
+      <li><a href="mailto:erikdyer@princeton.edu" data-copy-email="erikdyer@princeton.edu" aria-live="polite" title="Copy email address" data-print="erikdyer@princeton.edu">Email</a></li>
+      <li><a href="https://github.com/erik-d123" target="_blank" rel="noopener noreferrer" data-print="github.com/erik-d123">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/erikcdyer" target="_blank" rel="noopener noreferrer" data-print="linkedin.com/in/erikcdyer">LinkedIn</a></li>
+    </ul>
+  </header>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
+  <section class="reveal" style="--i:4" aria-labelledby="research">
+    <h2 id="research">Research</h2>
+    <ul class="entries">
+      <li class="entry">
+        <div class="row">
+          <span class="title">Princeton NLP Lab</span>
+          <span class="date mono"><span class="live" aria-hidden="true"></span>Apr 2026 – Now</span>
+        </div>
+        <p class="meta">Undergraduate Researcher · Advised by Karthik R. Narasimhan</p>
+        <p class="desc">Evaluating agentic system designs to understand how memory, planning, and tool orchestration affect performance</p>
+      </li>
+      <li class="entry">
+        <div class="row">
+          <span class="title">Princeton Vision &amp; Learning Lab</span>
+          <span class="date mono"><span class="live" aria-hidden="true"></span>Sep 2024 – Now</span>
+        </div>
+        <p class="meta">Undergraduate Researcher · Advised by Jia Deng</p>
+        <p class="desc">Studying 3D vision and perception, including how models learn from procedurally generated worlds</p>
+      </li>
+    </ul>
+  </section>
 
-<script src="dist/bundle.js"></script>
+  <section class="reveal" style="--i:5" aria-labelledby="experience">
+    <h2 id="experience">Experience</h2>
+    <ul class="entries">
+      <li class="entry has-logo">
+        <span class="logo"><img src="logos/databricks.svg" alt=""></span>
+        <div>
+          <div class="row">
+            <span class="title">Databricks</span>
+            <span class="date mono">May – Aug 2026</span>
+          </div>
+          <p class="meta">Software Engineer Intern · <span class="nw">Bellevue, WA</span></p>
+          <p class="desc">Improved metadata performance and latency for Unity Catalog</p>
+        </div>
+      </li>
+      <li class="entry has-logo">
+        <span class="logo"><img src="logos/aws.svg" alt=""></span>
+        <div>
+          <div class="row">
+            <span class="title">Amazon Web Services</span>
+            <span class="date mono">May – Aug 2025</span>
+          </div>
+          <p class="meta">Software Engineer Intern · <span class="nw">Seattle, WA</span></p>
+          <p class="desc">Built and scaled authorization infrastructure for IAM</p>
+        </div>
+      </li>
+      <li class="entry has-logo">
+        <span class="logo"><img src="logos/bluehalo.png" alt=""></span>
+        <div>
+          <div class="row">
+            <span class="title">BlueHalo</span>
+            <span class="date mono">May – Aug 2024</span>
+          </div>
+          <p class="meta">Software Engineer Intern · <span class="nw">Baltimore, MD</span></p>
+          <p class="desc">Modernized data pipelines for large datasets</p>
+        </div>
+      </li>
+    </ul>
+  </section>
 
+  <!-- Projects: hidden until there is something to list. Uncomment and add entries like the ones above.
+  <section class="reveal" style="--i:6" aria-labelledby="projects">
+    <h2 id="projects">Projects</h2>
+    <ul class="entries">
+      <li class="entry">
+        <div class="row">
+          <a class="title" href="URL" target="_blank" rel="noopener noreferrer">Name</a>
+          <span class="date mono">Status</span>
+        </div>
+        <p class="meta">One line</p>
+      </li>
+    </ul>
+  </section>
+  -->
+
+  <footer class="mono reveal" style="--i:7">Updated Oct 2026</footer>
+</main>
+<script>
+  // Copy the address instead of opening a mail app; fall back to mailto if the clipboard is unavailable.
+  const email = document.querySelector('[data-copy-email]');
+  email.addEventListener('click', async (e) => {
+    if (!navigator.clipboard) return;
+    e.preventDefault();
+    try {
+      await navigator.clipboard.writeText(email.dataset.copyEmail);
+    } catch {
+      location.href = email.href;
+      return;
+    }
+    email.textContent = 'Copied';
+    clearTimeout(email.reset);
+    email.reset = setTimeout(() => { email.textContent = 'Email'; }, 1600);
+  });
+</script>
 </body>
 </html>
